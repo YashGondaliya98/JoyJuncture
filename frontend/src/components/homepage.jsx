@@ -1,12 +1,12 @@
-import { useState } from "react";
-import "./HomePage.css";
+import { useNavigate } from "react-router-dom";
+import "./homepage.css";
 import logo from "../assets/logo.png";
 
 function HomePage() {
-  const [activePage, setActivePage] = useState("home");
+  const navigate = useNavigate();
 
-  const showPage = (page) => {
-    setActivePage(page);
+  const goTo = (path) => {
+    navigate(path);
     window.scrollTo(0, 0);
   };
 
@@ -16,12 +16,13 @@ function HomePage() {
       <header>
         <nav>
           <img src={logo} alt="Joy Juncture" className="logo-img" />
-          <div className="logo"> Joy Juncture</div>
+          <div className="logo">Joy Juncture</div>
+
           <ul className="nav-links">
-            <li onClick={() => showPage("home")}>Home</li>
-            <li onClick={() => showPage("about")}>About Us</li>
-            <li onClick={() => showPage("founder")}>Founder Story</li>
-            <li className="login-btn" onClick={() => showPage("login")}>
+            <li onClick={() => goTo("/")}>Home</li>
+            <li onClick={() => goTo("/about")}>About Us</li>
+            <li onClick={() => goTo("/founder")}>Founder Story</li>
+            <li className="login-btn" onClick={() => goTo("/login")}>
               Login
             </li>
           </ul>
@@ -29,66 +30,60 @@ function HomePage() {
       </header>
 
       {/* ================= HOME PAGE ================= */}
-      {activePage === "home" && (
-        <section className="landing-section">
-          <div className="landing-content">
-            {/* ===== SECTION 1 : HERO ===== */}
-            <h1>Where Games Become Memories</h1>
-            <p>
-              Joy Juncture is an experience-first gaming platform that brings
-              people together through board games, card games, live game nights
-              and joyful celebrations. We believe games are not just products —
-              they are moments of connection, laughter and belonging.
-            </p>
+      <section className="landing-section">
+        <div className="landing-content">
+          {/* ===== HERO ===== */}
+          <h1>Where Games Become Memories</h1>
+          <p>
+            Joy Juncture is an experience-first gaming platform that brings
+            people together through board games, card games, live game nights
+            and joyful celebrations.
+          </p>
 
-            {/* ===== SECTION 2 : 3 MAIN CARDS ===== */}
-            <div className="cards-container">
-              <div className="event-card" onClick={() => showPage("explore")}>
-                <div className="card-icon">🎯</div>
-                <h3>Explore Functions</h3>
-                <p>
-                  Discover curated board & card games designed for families,
-                  friends and communities. Find games for every mood,
-                  occasion and play style.
-                </p>
-                <button className="card-btn">Explore</button>
-              </div>
-
-              <div className="event-card" onClick={() => showPage("reviews")}>
-                <div className="card-icon">⭐</div>
-                <h3>Review Functions</h3>
-                <p>
-                  Read real stories and experiences shared by players,
-                  communities and event participants who have played with
-                  Joy Juncture.
-                </p>
-                <button className="card-btn">Reviews</button>
-              </div>
-
-              <div className="event-card" onClick={() => showPage("gamestore")}>
-                <div className="card-icon">🎮</div>
-                <h3>Game Store</h3>
-                <p>
-                  Explore and purchase Joy Juncture games, earn reward points
-                  and begin your journey into playful, meaningful experiences.
-                </p>
-                <button className="card-btn">Store</button>
-              </div>
+          {/* ===== CARDS ===== */}
+          <div className="cards-container">
+            <div className="event-card" onClick={() => goTo("/explore")}>
+              <div className="card-icon">🎯</div>
+              <h3>Explore Functions</h3>
+              <p>
+                Discover curated board & card games designed for families,
+                friends and communities.
+              </p>
+              <button className="card-btn">Explore</button>
             </div>
 
-            {/* ===== SECTION 3 : SUPPORTING TEXT ===== */}
-            <p style={{ marginTop: "3rem", maxWidth: "800px", marginInline: "auto" }}>
-              Joy Juncture brings together games, live events, custom experiences
-              and a growing community into one joyful ecosystem. Whether you are
-              playing at home, attending a game night or celebrating a special
-              occasion — Joy Juncture helps you play, connect and belong.
-            </p>
-          </div>
-        </section>
-      )}
+            <div className="event-card" onClick={() => goTo("/reviews")}>
+              <div className="card-icon">⭐</div>
+              <h3>Review Functions</h3>
+              <p>
+                Read real stories and experiences shared by players and event
+                participants.
+              </p>
+              <button className="card-btn">Reviews</button>
+            </div>
 
-      {/* ================= GAME STORE ================= */}
-      
+            <div className="event-card" onClick={() => goTo("/gamestore")}>
+              <div className="card-icon">🎮</div>
+              <h3>Game Store</h3>
+              <p>
+                Explore and purchase Joy Juncture games and begin your journey.
+              </p>
+              <button className="card-btn">Store</button>
+            </div>
+          </div>
+
+          <p
+            style={{
+              marginTop: "3rem",
+              maxWidth: "800px",
+              marginInline: "auto",
+            }}
+          >
+            Joy Juncture brings together games, live events, custom experiences
+            and a growing community into one joyful ecosystem.
+          </p>
+        </div>
+      </section>
 
       {/* ================= FOOTER ================= */}
       <footer className="footer">
@@ -96,18 +91,18 @@ function HomePage() {
           <div className="footer-section">
             <h3>🎉 Joy Juncture</h3>
             <p>
-              A joyful ecosystem of games, experiences and community where
-              play creates lasting connections.
+              A joyful ecosystem of games, experiences and community where play
+              creates lasting connections.
             </p>
           </div>
 
           <div className="footer-section">
             <h4>Quick Links</h4>
             <ul>
-              <li onClick={() => showPage("home")}>Home</li>
-              <li onClick={() => showPage("about")}>About Us</li>
-              <li onClick={() => showPage("founder")}>Founder Story</li>
-              <li onClick={() => showPage("gamestore")}>Game Store</li>
+              <li onClick={() => goTo("/")}>Home</li>
+              <li onClick={() => goTo("/about")}>About Us</li>
+              <li onClick={() => goTo("/founder")}>Founder Story</li>
+              <li onClick={() => goTo("/gamestore")}>Game Store</li>
             </ul>
           </div>
 

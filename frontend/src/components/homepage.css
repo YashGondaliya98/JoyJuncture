@@ -27,6 +27,7 @@ header {
   width: 100%;
   top: 0;
   z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 nav {
@@ -64,11 +65,17 @@ nav {
   font-family: "Poppins", sans-serif;
 }
 
+/* ================= PAGE CONTENT SPACING ================= */
+/* ensures content below fixed header */
+.page-content {
+  padding-top: 120px; /* adjust to header height */
+}
+
 /* ================= LANDING ================= */
 .landing-section {
-  margin-top: 80px;
   width: 100vw;
   height: 700px;
+  margin-top: 100px;
   background: linear-gradient(135deg, #3c51af, #5b13a4);
   color: white;
   padding: 4rem 2rem;
@@ -141,7 +148,6 @@ nav {
   cursor: pointer;
   font-family: "Poppins", sans-serif;
 }
-
 
 /* ================= FOOTER ================= */
 .footer {

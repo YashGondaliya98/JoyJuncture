@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light"> 
-    <title>About Us | Joy Juncture</title>
+    <title>Our Founders | Joy Juncture</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* SAME CSS AS BEFORE */
+         /* SAME CSS AS ABOVE, ensuring identical look */
         :root {
             color-scheme: light;
             --brand-blue: #1e3a8a;
@@ -98,78 +98,56 @@
             background-position: 0 85%;
         }
 
-        /* PHILOSOPHY SECTION */
-        .philosophy { margin: 60px 0; }
-        
-        .section-title {
+        /* TEAM SECTION */
+        .team {
             text-align: center;
-            font-size: 2.2rem;
+            margin-top: 60px;
+            margin-bottom: 20px;
+        }
+
+        .team-subtitle {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            margin-top: -10px;
             margin-bottom: 40px;
         }
 
-        .philosophy-grid {
-            display: flex; 
+        .founders-grid {
+            display: flex;
             justify-content: center;
-            flex-wrap: wrap; 
-            gap: 30px;
+            flex-wrap: wrap;
+            gap: 50px;
         }
 
-        .card-item {
-            background-color: var(--section-bg);
-            padding: 30px;
+        .founder-card {
+            max-width: 300px;
+            padding: 20px;
+            background: var(--section-bg);
             border-radius: 16px;
-            text-align: center;
-            transition: transform 0.2s;
             border: 1px solid #e2e8f0;
-            flex: 1 1 250px; 
-            max-width: 300px; 
         }
 
-        .card-item:hover {
-            transform: translateY(-5px);
-            border-color: var(--brand-blue);
-        }
-
-        .card-item h3 {
-            font-size: 1.4rem;
-            margin-bottom: 15px;
-            color: var(--text-dark);
-        }
-
-        .card-item p {
-            font-size: 0.95rem;
-            margin-bottom: 0;
-        }
-
-        /* CTA SECTION */
-        .cta-section {
-            background-color: var(--brand-blue);
-            color: white;
-            padding: 50px;
-            border-radius: 20px;
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        .cta-section h2 { color: white; margin-bottom: 10px; }
-        .cta-section p { color: #dbeafe; margin-bottom: 30px; }
-
-        .btn {
-            background-color: white;
-            color: var(--brand-blue);
-            padding: 15px 40px;
-            text-decoration: none;
+        .founder-name {
+            font-size: 1.6rem;
             font-weight: 700;
-            border-radius: 50px;
-            display: inline-block;
-            transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            font-family: 'Poppins', sans-serif;
+            color: var(--text-dark);
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 5px;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+        .founder-role {
+            color: var(--brand-blue);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+        
+        .founder-desc {
+            font-size: 0.95rem;
+            color: var(--text-light);
         }
 
         @media (max-width: 768px) {
@@ -186,40 +164,37 @@
     <main class="main-card">
         
         <section class="hero">
-            <h1>We Don't Just Make Games.<br><span>We Spark Connections.</span></h1>
+            <h1>Our <span>(Accidentally Awesome)</span> Story</h1>
         </section>
 
         <section class="story-content">
-            <p><span class="highlight">The Vibe:</span> At Joy Juncture, we believe life is too short for boring evenings and awkward silences. We are an Indian gaming studio dedicated to bringing people back to the table. In a world glued to screens, we’re here to remind you how much fun it is to look your friends in the eye... and bluff to their face.</p>
+            <p><span class="highlight">Honestly?</span> There's no dramatic "lifelong passion" backstory here—just two people who figured out they're pretty good at creating chaos, laughter, and the kind of competitive tension that turns friends into frenemies.</p>
             
-            <p style="text-align: center; font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--brand-blue); margin-top: 40px; font-style: italic; border-left: 4px solid var(--brand-blue); padding-left: 20px; display: inline-block;">
-                "Our mission? To spread the magic of tabletop games and build a culture that's all about fun!"
-            </p>
+            <p>Instead of sticking with the family business (textiles and electricals—thrilling, right?), we thought, why not channel our inner entrepreneurs? <strong>Spoiler:</strong> we have no idea what we're doing, but we've got some "big" dreams for a fancy office, preferably with a sea view and a foosball table.</p>
+            
+            <p>Now here we are, turning what started as random ideas into something real, fun, and (fingers crossed) successful.</p>
+            
+            <p style="font-weight: 500; color: var(--brand-blue);">So, hop on board this wild ride—no family legacy here, just two accidental game-makers with a knack for turning spontaneous ideas into epic fun!</p>
         </section>
 
-        <section class="philosophy">
-            <h2 class="section-title">Our Philosophy</h2>
-            <div class="philosophy-grid">
-                <div class="card-item">
-                    <h3>Connection Over Competition</h3>
-                    <p>Our games are ice-breakers and memory makers. The goal isn't just to win, it's to laugh together.</p>
+        <section class="team">
+            <h2>Meet the Minds</h2>
+            <p class="team-subtitle">Behind the Madness</p>
+
+            <div class="founders-grid">
+                <div class="founder-card">
+                    <div class="founder-name">Khushi Poddar</div>
+                    <div class="founder-role">The Dreamer-in-Chief</div>
+                    <div class="founder-desc">With a knack for bringing wild ideas to life.</div>
                 </div>
-                <div class="card-item">
-                    <h3>Aesthetic Meets Action</h3>
-                    <p>We hate ugly games. Every Joy Juncture box is designed to look as good on your shelf as it feels in your hand.</p>
-                </div>
-                <div class="card-item">
-                    <h3>Fun for All</h3>
-                    <p>Whether you're 10 or 100, there's a Joy Juncture game for you.</p>
+
+                <div class="founder-card">
+                    <div class="founder-name">Muskan Poddar</div>
+                    <div class="founder-role">The Design Whiz</div>
+                    <div class="founder-desc">Making sure every card, board, and token looks as amazing as it feels.</div>
                 </div>
             </div>
         </section>
-
-        <div class="cta-section">
-            <h2>Why Choose Joy Juncture?</h2>
-            <p>Because the best stories happen when you gather your favorite people, open a box, and let the chaos begin.</p>
-            <a href="#" class="btn">Shop Our Games</a>
-        </div>
 
     </main>
 

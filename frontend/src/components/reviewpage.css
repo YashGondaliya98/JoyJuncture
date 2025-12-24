@@ -143,4 +143,10 @@
   text-transform: uppercase;
 }
 
+.card-icon {
+  font-size: 60px;
+  margin-bottom: 18px;
+  line-height: 1;
+  transform: scale(1.05);
+}
 

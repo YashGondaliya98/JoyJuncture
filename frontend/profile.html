@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Joy Juncture</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CORE STYLES (Exact match to previous pages) --- */
+        :root {
+            color-scheme: light;
+            --brand-blue: #1e3a8a;
+            --brand-gradient: linear-gradient(135deg, #172554 0%, #1e3a8a 50%, #2563eb 100%);
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --card-bg: #ffffff;
+            --section-bg: #f8fafc;
+            --success-green: #10b981;
+            --input-border: #cbd5e1;
+        }
+
+        body {
+            background: var(--brand-gradient);
+            background-color: var(--brand-blue);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .main-card {
+            background-color: var(--card-bg) !important;
+            width: 100%;
+            max-width: 1100px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        .dashboard-header {
+            padding: 20px 40px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f5f9;
+        }
+
+        .brand-logo-small {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5em;
+            color: var(--brand-blue);
+            margin: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--brand-blue);
+        }
+        
+        /* Updated Link Styling */
+        .nav-links a { 
+            cursor: pointer; 
+            text-decoration: none;
+            color: var(--brand-blue);
+        }
+        .nav-links a:hover { opacity: 0.8; }
+
+        /* --- PROFILE PAGE LAYOUT --- */
+        .profile-container {
+            display: grid;
+            grid-template-columns: 300px 1fr; /* Fixed Sidebar, Flexible Content */
+            min-height: 600px;
+        }
+
+        /* LEFT SIDE: USER DETAILS */
+        .user-details-sidebar {
+            background-color: var(--section-bg);
+            border-right: 1px solid #e2e8f0;
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            background: var(--brand-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.2);
+        }
+
+        .user-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--brand-blue);
+            margin-bottom: 5px;
+        }
+
+        .user-email {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        .detail-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+        }
+        .detail-label { color: var(--text-light); font-weight: 500; }
+        .detail-val { color: var(--text-dark); font-weight: 600; }
+
+        /* RIGHT SIDE: CONTENT AREA */
+        .content-area {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* 1. WALLET SECTION (Top Right) */
+        .wallet-banner {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 1px solid #bfdbfe;
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wallet-info h3 { margin: 0; font-size: 1rem; color: var(--brand-blue); text-transform: uppercase; letter-spacing: 1px; }
+        .wallet-points { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--brand-blue); font-weight: 700; line-height: 1; margin-top: 5px; }
+        
+        .wallet-btn {
+            background: var(--brand-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: transform 0.2s;
+            text-decoration: none; /* For the link look */
+            display: inline-block;
+        }
+        .wallet-btn:hover { transform: translateY(-2px); }
+
+        /* 2. SPLIT SECTION (Bottom Right) */
+        .lists-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            height: 100%;
+        }
+
+        .info-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--brand-blue);
+            border-bottom: 2px solid var(--section-bg);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .scroll-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: var(--section-bg);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .list-icon { margin-right: 10px; font-size: 1.2rem; }
+        .list-text { flex-grow: 1; }
+        .list-tag { font-size: 0.75rem; background: #e2e8f0; padding: 2px 8px; border-radius: 10px; color: var(--text-light); }
+
+        @media (max-width: 900px) {
+            .profile-container { grid-template-columns: 1fr; }
+            .user-details-sidebar { border-right: none; border-bottom: 1px solid #e2e8f0; }
+            .lists-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="main-card">
+        
+        <div class="dashboard-header">
+            <div class="brand-logo-small">Joy Juncture</div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="wallet.html">Wallet</a>
+                <a href="#" style="border-bottom: 2px solid var(--brand-blue);">Profile</a>
+                <a href="login.html">Log Out</a>
+            </div>
+        </div>
+
+        <div class="profile-container">
+            
+            <aside class="user-details-sidebar">
+                <div class="avatar" id="uInitials">--</div>
+                <div class="user-name" id="uName">Loading...</div>
+                <div class="user-email" id="uEmail">...</div>
+
+                <div style="width: 100%; margin-top: 10px;">
+                    <div class="detail-row">
+                        <span class="detail-label">Phone</span>
+                        <span class="detail-val" id="uPhone">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">City</span>
+                        <span class="detail-val" id="uCity">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Member Since</span>
+                        <span class="detail-val" id="uJoined">--</span>
+                    </div>
+                </div>
+
+                </aside>
+
+            <div class="content-area">
+
+                <div class="wallet-banner">
+                    <div class="wallet-info">
+                        <h3>Wallet Balance</h3>
+                        <div class="wallet-points"><span id="uPoints">0</span> pts</div>
+                    </div>
+                    <a href="wallet.html" class="wallet-btn">View Wallet</a>
+                </div>
+
+                <div class="lists-grid">
+                    
+                    <div class="info-card">
+                        <div class="card-title">Your Game Store</div>
+                        <div class="scroll-list" id="gamesList">
+                            </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-title">Past Experience</div>
+                        <div class="scroll-list" id="historyList">
+                           </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // --- SIMULATED LOGIN DATA ---
+        // In a real app, this comes from the database
+        const userProfile = {
+            name: "Khushi Poddar",
+            initials: "KP",
+            email: "khushi@example.com",
+            phone: "+91 98765 43210",
+            city: "Surat, Gujarat",
+            joined: "Aug 2024",
+            points: 2500,
+            // List of games the user OWNS
+            myGames: [
+                { name: "Dead Man's Deck", type: "Card Game" },
+                { name: "Mehfil", type: "Music" },
+                { name: "Tamasha", type: "Party" }
+            ],
+            // List of user's past activity
+            history: [
+                { event: "Won 'Tamasha' Night", date: "2 days ago", reward: "+500 pts" },
+                { event: "Played at Garden Venue", date: "1 week ago", reward: "XP Gained" },
+                { event: "Bought 'Mehfil' Deck", date: "2 weeks ago", reward: "-799 pts" },
+                { event: "Joined Joy Juncture", date: "Aug 2024", reward: "Welcome" }
+            ]
+        };
+
+        // --- POPULATE PAGE ---
+        window.onload = function() {
+            // Fill User Details
+            document.getElementById('uName').innerText = userProfile.name;
+            document.getElementById('uInitials').innerText = userProfile.initials;
+            document.getElementById('uEmail').innerText = userProfile.email;
+            document.getElementById('uPhone').innerText = userProfile.phone;
+            document.getElementById('uCity').innerText = userProfile.city;
+            document.getElementById('uJoined').innerText = userProfile.joined;
+            
+            // Fill Wallet
+            document.getElementById('uPoints').innerText = userProfile.points.toLocaleString();
+
+            // Fill Game Store List
+            const gamesContainer = document.getElementById('gamesList');
+            if(userProfile.myGames.length > 0) {
+                userProfile.myGames.forEach(game => {
+                    gamesContainer.innerHTML += `
+                        <div class="list-item">
+                            <span class="list-icon">🎲</span>
+                            <span class="list-text">${game.name}</span>
+                            <span class="list-tag">${game.type}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                gamesContainer.innerHTML = `<div style="padding:10px; color:#aaa; font-style:italic;">No games owned yet.</div>`;
+            }
+
+            // Fill Past Experience List
+            const historyContainer = document.getElementById('historyList');
+            if(userProfile.history.length > 0) {
+                userProfile.history.forEach(item => {
+                    historyContainer.innerHTML += `
+                        <div class="list-item">
+                            <span class="list-icon">🗓️</span>
+                            <div class="list-text">
+                                <div style="font-weight:600;">${item.event}</div>
+                                <div style="font-size:0.75rem; color:#888;">${item.date}</div>
+                            </div>
+                            <span style="font-weight:600; color:var(--brand-blue);">${item.reward}</span>
+                        </div>
+                    `;
+                });
+            }
+        };
+    </script>
+
+</body>
+</html>

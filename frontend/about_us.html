@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light"> 
+    <title>About Us | Joy Juncture</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* SAME CSS AS BEFORE */
+        :root {
+            color-scheme: light;
+            --brand-blue: #1e3a8a;
+            --brand-gradient: linear-gradient(135deg, #172554 0%, #1e3a8a 50%, #2563eb 100%);
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --card-bg: #ffffff;
+            --section-bg: #f8fafc;
+        }
+
+        body {
+            background: var(--brand-gradient);
+            background-color: var(--brand-blue);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .brand-logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4em;
+            color: #ffffff;
+            margin-bottom: 30px;
+            text-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .main-card {
+            background-color: var(--card-bg) !important;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 60px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--brand-blue);
+            margin-top: 0;
+        }
+
+        p {
+            line-height: 1.8;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .hero span {
+            font-style: italic;
+            font-size: 0.8em;
+            font-family: 'Dancing Script', cursive;
+            color: var(--brand-blue);
+        }
+
+        .highlight {
+            font-weight: 600;
+            color: var(--brand-blue);
+            background: linear-gradient(120deg, #dbeafe 0%, #dbeafe 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 30%;
+            background-position: 0 85%;
+        }
+
+        /* PHILOSOPHY SECTION */
+        .philosophy { margin: 60px 0; }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 40px;
+        }
+
+        .philosophy-grid {
+            display: flex; 
+            justify-content: center;
+            flex-wrap: wrap; 
+            gap: 30px;
+        }
+
+        .card-item {
+            background-color: var(--section-bg);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            transition: transform 0.2s;
+            border: 1px solid #e2e8f0;
+            flex: 1 1 250px; 
+            max-width: 300px; 
+        }
+
+        .card-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--brand-blue);
+        }
+
+        .card-item h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        .card-item p {
+            font-size: 0.95rem;
+            margin-bottom: 0;
+        }
+
+        /* CTA SECTION */
+        .cta-section {
+            background-color: var(--brand-blue);
+            color: white;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .cta-section h2 { color: white; margin-bottom: 10px; }
+        .cta-section p { color: #dbeafe; margin-bottom: 30px; }
+
+        .btn {
+            background-color: white;
+            color: var(--brand-blue);
+            padding: 15px 40px;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 50px;
+            display: inline-block;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .main-card { padding: 30px 20px; }
+            .hero h1 { font-size: 2.2rem; }
+            .brand-logo { font-size: 3em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="brand-logo">Joy Juncture</div>
+
+    <main class="main-card">
+        
+        <section class="hero">
+            <h1>We Don't Just Make Games.<br><span>We Spark Connections.</span></h1>
+        </section>
+
+        <section class="story-content">
+            <p><span class="highlight">The Vibe:</span> At Joy Juncture, we believe life is too short for boring evenings and awkward silences. We are an Indian gaming studio dedicated to bringing people back to the table. In a world glued to screens, we’re here to remind you how much fun it is to look your friends in the eye... and bluff to their face.</p>
+            
+            <p style="text-align: center; font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--brand-blue); margin-top: 40px; font-style: italic; border-left: 4px solid var(--brand-blue); padding-left: 20px; display: inline-block;">
+                "Our mission? To spread the magic of tabletop games and build a culture that's all about fun!"
+            </p>
+        </section>
+
+        <section class="philosophy">
+            <h2 class="section-title">Our Philosophy</h2>
+            <div class="philosophy-grid">
+                <div class="card-item">
+                    <h3>Connection Over Competition</h3>
+                    <p>Our games are ice-breakers and memory makers. The goal isn't just to win, it's to laugh together.</p>
+                </div>
+                <div class="card-item">
+                    <h3>Aesthetic Meets Action</h3>
+                    <p>We hate ugly games. Every Joy Juncture box is designed to look as good on your shelf as it feels in your hand.</p>
+                </div>
+                <div class="card-item">
+                    <h3>Fun for All</h3>
+                    <p>Whether you're 10 or 100, there's a Joy Juncture game for you.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="cta-section">
+            <h2>Why Choose Joy Juncture?</h2>
+            <p>Because the best stories happen when you gather your favorite people, open a box, and let the chaos begin.</p>
+            <a href="#" class="btn">Shop Our Games</a>
+        </div>
+
+    </main>
+
+</body>
+</html>

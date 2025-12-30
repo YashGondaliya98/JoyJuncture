@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light"> 
+    <title>Our Founders | Joy Juncture</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+         /* SAME CSS AS ABOVE, ensuring identical look */
+        :root {
+            color-scheme: light;
+            --brand-blue: #1e3a8a;
+            --brand-gradient: linear-gradient(135deg, #172554 0%, #1e3a8a 50%, #2563eb 100%);
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --card-bg: #ffffff;
+            --section-bg: #f8fafc;
+        }
+
+        body {
+            background: var(--brand-gradient);
+            background-color: var(--brand-blue);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .brand-logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4em;
+            color: #ffffff;
+            margin-bottom: 30px;
+            text-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .main-card {
+            background-color: var(--card-bg) !important;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 60px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--brand-blue);
+            margin-top: 0;
+        }
+
+        p {
+            line-height: 1.8;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .hero span {
+            font-style: italic;
+            font-size: 0.8em;
+            font-family: 'Dancing Script', cursive;
+            color: var(--brand-blue);
+        }
+
+        .highlight {
+            font-weight: 600;
+            color: var(--brand-blue);
+            background: linear-gradient(120deg, #dbeafe 0%, #dbeafe 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 30%;
+            background-position: 0 85%;
+        }
+
+        /* TEAM SECTION */
+        .team {
+            text-align: center;
+            margin-top: 60px;
+            margin-bottom: 20px;
+        }
+
+        .team-subtitle {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            margin-top: -10px;
+            margin-bottom: 40px;
+        }
+
+        .founders-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 50px;
+        }
+
+        .founder-card {
+            max-width: 300px;
+            padding: 20px;
+            background: var(--section-bg);
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .founder-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 5px;
+        }
+
+        .founder-role {
+            color: var(--brand-blue);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+        
+        .founder-desc {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        @media (max-width: 768px) {
+            .main-card { padding: 30px 20px; }
+            .hero h1 { font-size: 2.2rem; }
+            .brand-logo { font-size: 3em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="brand-logo">Joy Juncture</div>
+
+    <main class="main-card">
+        
+        <section class="hero">
+            <h1>Our <span>(Accidentally Awesome)</span> Story</h1>
+        </section>
+
+        <section class="story-content">
+            <p><span class="highlight">Honestly?</span> There's no dramatic "lifelong passion" backstory here—just two people who figured out they're pretty good at creating chaos, laughter, and the kind of competitive tension that turns friends into frenemies.</p>
+            
+            <p>Instead of sticking with the family business (textiles and electricals—thrilling, right?), we thought, why not channel our inner entrepreneurs? <strong>Spoiler:</strong> we have no idea what we're doing, but we've got some "big" dreams for a fancy office, preferably with a sea view and a foosball table.</p>
+            
+            <p>Now here we are, turning what started as random ideas into something real, fun, and (fingers crossed) successful.</p>
+            
+            <p style="font-weight: 500; color: var(--brand-blue);">So, hop on board this wild ride—no family legacy here, just two accidental game-makers with a knack for turning spontaneous ideas into epic fun!</p>
+        </section>
+
+        <section class="team">
+            <h2>Meet the Minds</h2>
+            <p class="team-subtitle">Behind the Madness</p>
+
+            <div class="founders-grid">
+                <div class="founder-card">
+                    <div class="founder-name">Khushi Poddar</div>
+                    <div class="founder-role">The Dreamer-in-Chief</div>
+                    <div class="founder-desc">With a knack for bringing wild ideas to life.</div>
+                </div>
+
+                <div class="founder-card">
+                    <div class="founder-name">Muskan Poddar</div>
+                    <div class="founder-role">The Design Whiz</div>
+                    <div class="founder-desc">Making sure every card, board, and token looks as amazing as it feels.</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>

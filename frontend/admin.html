@@ -145,7 +145,7 @@
         /* Inputs & Lists */
         .game-list-container {
             background: white;
-            border-radius: 12px;
+            border-radius: 18px;
             border: 1px solid #e2e8f0;
             overflow: hidden;
             max-height: 250px;
@@ -166,6 +166,38 @@
         .game-status.blocked { 
             background: var(--neutral-grey-bg); 
             color: var(--neutral-grey-text);
+        }
+
+        .booked-venue-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            background: #fef7f7;
+            border-left: 4px solid #ef4444;
+        }
+        .booked-venue-item:last-child { border-bottom: none; }
+        
+        .booked-venue-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+        
+        .booked-venue-details {
+            font-size: 0.8rem;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .booked-status {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         .input-group {
@@ -269,6 +301,13 @@
                             <input type="text" id="newVenueInput" placeholder="Enter venue name..." required>
                             <input type="number" id="venueCapacity" placeholder="Capacity" min="1" required>
                             <button class="btn-action" onclick="addVenue()">+ Add Venue</button>
+                        </div>
+                        
+                        <div style="margin-top: 30px;">
+                            <label>Booked Venues</label>
+                            <div class="game-list-container" id="bookedVenueList">
+                                <!-- Booked venues will be displayed here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -380,9 +419,10 @@
                 const venues = await response.json();
                 
                 const venueList = document.getElementById('venueList');
+                const bookedVenueList = document.getElementById('bookedVenueList');
                 venueList.innerHTML = '';
+                bookedVenueList.innerHTML = '';
                 
-                // Only show available venues
                 venues.forEach(venue => {
                     if (venue.status === 'available') {
                         const venueItem = document.createElement('div');
@@ -393,6 +433,18 @@
                             <span class="game-status">Available</span>
                         `;
                         venueList.appendChild(venueItem);
+                    } else if (venue.status === 'booked') {
+                        const bookedItem = document.createElement('div');
+                        bookedItem.className = 'booked-venue-item';
+                        bookedItem.setAttribute('data-id', venue._id);
+                        bookedItem.innerHTML = `
+                            <div class="booked-venue-name">${venue.name}</div>
+                            <div class="booked-venue-details">
+                                <span>📅 ${venue.eventDetails?.eventName || 'Event'} • ${new Date(venue.bookedDate).toLocaleDateString()}</span>
+                                <span class="booked-status">Booked</span>
+                            </div>
+                        `;
+                        bookedVenueList.appendChild(bookedItem);
                     }
                 });
             } catch (error) {
@@ -402,7 +454,7 @@
 
         function updateBlockGameDropdown() {
             const blockSelect = document.getElementById('blockGameSelect');
-            const gameItems = document.querySelectorAll('.game-item');
+            const gameItems = document.querySelectorAll('#gameList .game-item');
             
             // Clear existing options except the first one
             blockSelect.innerHTML = '<option value="" disabled selected>Select a game to block...</option>';
@@ -506,7 +558,7 @@
         async function blockGame() {
             const select = document.getElementById('blockGameSelect');
             const nameToBlock = select.value;
-            const items = document.querySelectorAll('.game-item');
+            const items = document.querySelectorAll('#gameList .game-item');
 
             if (!nameToBlock) {
                 alert("Please select a game from the list first.");

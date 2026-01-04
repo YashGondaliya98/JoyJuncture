@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import healthRoutes from "./routes/health.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import gameRoutes from "./routes/game.routes.js";
 
 dotenv.config();
 
@@ -27,5 +28,6 @@ connectDB();
 
 app.use("/api/health", healthRoutes);
 app.use("/api", authRoutes);
+app.use("/api", gameRoutes);
 
 export default app;

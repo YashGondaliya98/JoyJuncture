@@ -277,16 +277,20 @@
                         
                         <div class="input-group">
                             <label>Add New Game</label>
-                            <select id="newGameSelect">
-                                <option value="" disabled selected>Select a game to add...</option>
-                                <option>The Bloody Inheritance</option>
-                                <option>Buzzed</option>
-                                <option>Judge Me & Guess</option>
-                                <option>One More Round</option>
-                                <option>Dead Man's Deck (Re-stock)</option>
-                                <option>Mehfil (Re-stock)</option>
-                                <option>Tamasha (Re-stock)</option>
+                            <input type="text" id="newGameInput" placeholder="Enter game name..." required>
+                            <input type="text" id="gameDescription" placeholder="Enter description..." required>
+                            <select id="gameCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="Card Game">Card Game</option>
+                                <option value="Board Game">Board Game</option>
+                                <option value="Party Game">Party Game</option>
+                                <option value="Strategy Game">Strategy Game</option>
                             </select>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <input type="number" id="minPlayers" placeholder="Min Players" min="1" required>
+                                <input type="number" id="maxPlayers" placeholder="Max Players" min="1" required>
+                            </div>
+                            <input type="number" id="gameDuration" placeholder="Duration (minutes)" min="1" required>
                             <button class="btn-action" onclick="addGame()">+ Add to List</button>
                         </div>
 
@@ -332,33 +336,141 @@
     </main>
 
     <script>
-        function addGame() {
-            // Using the Select Dropdown instead of Text Input
-            const select = document.getElementById('newGameSelect');
-            const list = document.getElementById('gameList');
-            const blockSelect = document.getElementById('blockGameSelect');
-            const name = select.value;
+        // Load games from database on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/games');
+                const games = await response.json();
+                
+                const gameList = document.getElementById('gameList');
+                gameList.innerHTML = '';
+                
+                // Only show active games in the catalog
+                games.forEach(game => {
+                    if (game.status === 'Active') {
+                        const gameItem = document.createElement('div');
+                        gameItem.className = 'game-item';
+                        gameItem.setAttribute('data-id', game._id);
+                        gameItem.innerHTML = `
+                            <span>${game.name}</span>
+                            <span class="game-status">${game.status}</span>
+                        `;
+                        gameList.appendChild(gameItem);
+                    }
+                });
+                
+                updateBlockGameDropdown();
+            } catch (error) {
+                // Keep original games if database not available
+                console.log('Using default games');
+                updateBlockGameDropdown();
+            }
+        });
 
-            if (name) {
-                // Add to Display List
+        function updateBlockGameDropdown() {
+            const blockSelect = document.getElementById('blockGameSelect');
+            const gameItems = document.querySelectorAll('.game-item');
+            
+            // Clear existing options except the first one
+            blockSelect.innerHTML = '<option value="" disabled selected>Select a game to block...</option>';
+            
+            // Add only active games to the dropdown
+            gameItems.forEach(item => {
+                const gameName = item.querySelector('span').innerText;
+                const gameStatus = item.querySelector('.game-status');
+                
+                if (!gameStatus.classList.contains('blocked')) {
+                    const option = document.createElement('option');
+                    option.value = gameName;
+                    option.text = gameName;
+                    blockSelect.appendChild(option);
+                }
+            });
+        }
+
+        async function addGame() {
+            // Get all form values
+            const name = document.getElementById('newGameInput').value.trim();
+            const description = document.getElementById('gameDescription').value.trim();
+            const category = document.getElementById('gameCategory').value;
+            const minPlayers = parseInt(document.getElementById('minPlayers').value);
+            const maxPlayers = parseInt(document.getElementById('maxPlayers').value);
+            const duration = parseInt(document.getElementById('gameDuration').value);
+
+            // Validation
+            if (!name || !description || !category || !minPlayers || !maxPlayers || !duration) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (minPlayers > maxPlayers) {
+                alert('Min players cannot be greater than max players');
+                return;
+            }
+
+            const list = document.getElementById('gameList');
+
+            try {
+                // Save to database with all fields
+                const response = await fetch('http://localhost:5000/api/games', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        description: description,
+                        category: category,
+                        minPlayers: minPlayers,
+                        maxPlayers: maxPlayers,
+                        duration: duration
+                    })
+                });
+
+                if (response.ok) {
+                    const newGame = await response.json();
+                    // Add to Display List with database ID
+                    const newItem = document.createElement('div');
+                    newItem.className = 'game-item';
+                    newItem.setAttribute('data-id', newGame._id);
+                    newItem.innerHTML = `<span>${name}</span><span class="game-status">Active</span>`;
+                    list.appendChild(newItem);
+
+                    // Update block dropdown with new active game
+                    updateBlockGameDropdown();
+
+                    // Clear all inputs
+                    document.getElementById('newGameInput').value = '';
+                    document.getElementById('gameDescription').value = '';
+                    document.getElementById('gameCategory').value = '';
+                    document.getElementById('minPlayers').value = '';
+                    document.getElementById('maxPlayers').value = '';
+                    document.getElementById('gameDuration').value = '';
+                    
+                    alert(`${name} has been added successfully!`);
+                } else {
+                    const result = await response.json();
+                    alert(result.error);
+                }
+            } catch (error) {
+                // Fallback to original functionality
                 const newItem = document.createElement('div');
                 newItem.className = 'game-item';
                 newItem.innerHTML = `<span>${name}</span><span class="game-status">Active</span>`;
                 list.appendChild(newItem);
-
-                // Add the new game to the Block list dynamically so it can be blocked later
-                const newOption = document.createElement('option');
-                newOption.text = name;
-                blockSelect.add(newOption);
-
-                // Reset dropdown
-                select.value = ""; 
-            } else {
-                alert("Please select a game from the list.");
+                updateBlockGameDropdown();
+                
+                // Clear inputs
+                document.getElementById('newGameInput').value = '';
+                document.getElementById('gameDescription').value = '';
+                document.getElementById('gameCategory').value = '';
+                document.getElementById('minPlayers').value = '';
+                document.getElementById('maxPlayers').value = '';
+                document.getElementById('gameDuration').value = '';
+                
+                alert(`${name} has been added!`);
             }
         }
 
-        function blockGame() {
+        async function blockGame() {
             const select = document.getElementById('blockGameSelect');
             const nameToBlock = select.value;
             const items = document.querySelectorAll('.game-item');
@@ -368,22 +480,44 @@
                 return;
             }
 
-            let found = false;
+            let gameId = null;
+            let gameItem = null;
+            
+            // Find the game item and get its ID
             items.forEach(item => {
                 const gameName = item.querySelector('span').innerText;
                 if (gameName === nameToBlock) {
-                    const status = item.querySelector('.game-status');
-                    status.innerText = "Blocked";
-                    status.classList.add('blocked');
-                    found = true;
+                    gameId = item.getAttribute('data-id');
+                    gameItem = item;
                 }
             });
 
-            if(found) {
-                alert(`${nameToBlock} has been blocked.`);
+            if (gameItem && gameId) {
+                try {
+                    // Update database to block the game
+                    const response = await fetch(`http://localhost:5000/api/games/${gameId}/status`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'Blocked' })
+                    });
+
+                    if (response.ok) {
+                        // Remove from catalog display
+                        gameItem.remove();
+                        alert(`${nameToBlock} has been blocked and removed from catalog.`);
+                    } else {
+                        alert('Failed to block game in database.');
+                    }
+                } catch (error) {
+                    // Fallback to local removal if database fails
+                    gameItem.remove();
+                    alert(`${nameToBlock} has been blocked and removed from catalog.`);
+                }
+                
                 select.value = ""; // Reset dropdown
+                updateBlockGameDropdown(); // Update dropdown
             } else {
-                alert("Game not active in the current catalog.");
+                alert("Game not found in the current catalog.");
             }
         }
 

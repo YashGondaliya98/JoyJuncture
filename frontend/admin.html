@@ -255,6 +255,24 @@
             <div class="management-grid">
 
                 <div class="dashboard-column">
+                    <h2>Venue & Functions</h2>
+                    
+                    <label>Available Venues</label>
+                    <div class="game-list-container" id="venueList">
+                        <!-- Available venues will be displayed here -->
+                    </div>
+
+                    <div style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                        <div class="input-group">
+                            <label>Add New Venue</label>
+                            <input type="text" id="newVenueInput" placeholder="Enter venue name..." required>
+                            <input type="number" id="venueCapacity" placeholder="Capacity" min="1" required>
+                            <button class="btn-action" onclick="addVenue()">+ Add Venue</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-column">
                     <h2>Game Management</h2>
                     
                     <label>Current Catalog</label>
@@ -307,37 +325,25 @@
                     </div>
                 </div>
 
-                <div class="dashboard-column">
-                    <h2>Venue & Functions</h2>
-
-                    <div class="input-group">
-                        <label>Select Venue (With Capacity)</label>
-                        <select id="venueSelect">
-                            <option>Main Hall A (Capacity: 150)</option>
-                            <option>Garden Area (Capacity: 50)</option>
-                            <option>Rooftop Terrace (Capacity: 80)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Function Date</label>
-                        <input type="date">
-                    </div>
-
-                    <button class="btn-action" style="margin-top: 10px;" onclick="bookVenue()">Add Function & Block Venue</button>
+                
 
                     <div class="logic-note">
-                        <strong>System Note:</strong> After adding one function on a specific venue & date, the system will automatically <u>block</u> that venue for any other function requests.
+                        <strong>System Note:</strong> Venues are automatically booked when users select them. Only available venues are shown to users based on date and capacity requirements.
                     </div>
-                </div>
+        
 
             </div> 
         </div> 
     </main>
 
     <script>
-        // Load games from database on page load
+        // Load games and venues from database on page load
         document.addEventListener('DOMContentLoaded', async () => {
+            await loadGames();
+            await loadVenues();
+        });
+
+        async function loadGames() {
             try {
                 const response = await fetch('http://localhost:5000/api/games');
                 const games = await response.json();
@@ -365,7 +371,33 @@
                 console.log('Using default games');
                 updateBlockGameDropdown();
             }
-        });
+        }
+
+        async function loadVenues() {
+            try {
+                const response = await fetch('http://localhost:5000/api/venues');
+                const venues = await response.json();
+                
+                const venueList = document.getElementById('venueList');
+                venueList.innerHTML = '';
+                
+                // Only show available venues
+                venues.forEach(venue => {
+                    if (venue.status === 'available') {
+                        const venueItem = document.createElement('div');
+                        venueItem.className = 'game-item';
+                        venueItem.setAttribute('data-id', venue._id);
+                        venueItem.innerHTML = `
+                            <span>${venue.name} (Capacity: ${venue.capacity})</span>
+                            <span class="game-status">Available</span>
+                        `;
+                        venueList.appendChild(venueItem);
+                    }
+                });
+            } catch (error) {
+                console.log('Failed to load venues');
+            }
+        }
 
         function updateBlockGameDropdown() {
             const blockSelect = document.getElementById('blockGameSelect');
@@ -518,6 +550,50 @@
                 updateBlockGameDropdown(); // Update dropdown
             } else {
                 alert("Game not found in the current catalog.");
+            }
+        }
+
+        async function addVenue() {
+            const name = document.getElementById('newVenueInput').value.trim();
+            const capacity = parseInt(document.getElementById('venueCapacity').value);
+
+            if (!name || !capacity) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/venues', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, capacity })
+                });
+
+                if (response.ok) {
+                    const newVenue = await response.json();
+                    
+                    // Add to display list
+                    const venueList = document.getElementById('venueList');
+                    const newItem = document.createElement('div');
+                    newItem.className = 'game-item';
+                    newItem.setAttribute('data-id', newVenue._id);
+                    newItem.innerHTML = `
+                        <span>${name} (Capacity: ${capacity})</span>
+                        <span class="game-status">Available</span>
+                    `;
+                    venueList.appendChild(newItem);
+
+                    // Clear inputs
+                    document.getElementById('newVenueInput').value = '';
+                    document.getElementById('venueCapacity').value = '';
+                    
+                    alert(`${name} has been added successfully!`);
+                } else {
+                    const result = await response.json();
+                    alert(result.error);
+                }
+            } catch (error) {
+                alert('Failed to add venue. Please try again.');
             }
         }
 

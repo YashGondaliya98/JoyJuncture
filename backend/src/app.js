@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import healthRoutes from "./routes/health.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import gameRoutes from "./routes/game.routes.js";
+import venueRoutes from "./routes/venue.routes.js";
 
 dotenv.config();
 
@@ -29,5 +30,6 @@ connectDB();
 app.use("/api/health", healthRoutes);
 app.use("/api", authRoutes);
 app.use("/api", gameRoutes);
+app.use("/api", venueRoutes);
 
 export default app;

@@ -145,7 +145,7 @@
         /* Inputs & Lists */
         .game-list-container {
             background: white;
-            border-radius: 12px;
+            border-radius: 18px;
             border: 1px solid #e2e8f0;
             overflow: hidden;
             max-height: 250px;
@@ -166,6 +166,38 @@
         .game-status.blocked { 
             background: var(--neutral-grey-bg); 
             color: var(--neutral-grey-text);
+        }
+
+        .booked-venue-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            background: #fef7f7;
+            border-left: 4px solid #ef4444;
+        }
+        .booked-venue-item:last-child { border-bottom: none; }
+        
+        .booked-venue-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+        
+        .booked-venue-details {
+            font-size: 0.8rem;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .booked-status {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         .input-group {
@@ -235,6 +267,7 @@
             <div class="brand-logo-small">Joy Juncture</div>
             <div class="nav-links">
                 <span>Dashboard</span>
+                <span onclick="window.location.href='user_data.html'">User Data</span>
                 <span>Settings</span>
                 <span>Log Out</span>
             </div>
@@ -253,6 +286,31 @@
             </div>
 
             <div class="management-grid">
+
+                <div class="dashboard-column">
+                    <h2>Venue & Functions</h2>
+                    
+                    <label>Available Venues</label>
+                    <div class="game-list-container" id="venueList">
+                        <!-- Available venues will be displayed here -->
+                    </div>
+
+                    <div style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                        <div class="input-group">
+                            <label>Add New Venue</label>
+                            <input type="text" id="newVenueInput" placeholder="Enter venue name..." required>
+                            <input type="number" id="venueCapacity" placeholder="Capacity" min="1" required>
+                            <button class="btn-action" onclick="addVenue()">+ Add Venue</button>
+                        </div>
+                        
+                        <div style="margin-top: 30px;">
+                            <label>Booked Venues</label>
+                            <div class="game-list-container" id="bookedVenueList">
+                                <!-- Booked venues will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="dashboard-column">
                     <h2>Game Management</h2>
@@ -277,16 +335,20 @@
                         
                         <div class="input-group">
                             <label>Add New Game</label>
-                            <select id="newGameSelect">
-                                <option value="" disabled selected>Select a game to add...</option>
-                                <option>The Bloody Inheritance</option>
-                                <option>Buzzed</option>
-                                <option>Judge Me & Guess</option>
-                                <option>One More Round</option>
-                                <option>Dead Man's Deck (Re-stock)</option>
-                                <option>Mehfil (Re-stock)</option>
-                                <option>Tamasha (Re-stock)</option>
+                            <input type="text" id="newGameInput" placeholder="Enter game name..." required>
+                            <input type="text" id="gameDescription" placeholder="Enter description..." required>
+                            <select id="gameCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="Card Game">Card Game</option>
+                                <option value="Board Game">Board Game</option>
+                                <option value="Party Game">Party Game</option>
+                                <option value="Strategy Game">Strategy Game</option>
                             </select>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <input type="number" id="minPlayers" placeholder="Min Players" min="1" required>
+                                <input type="number" id="maxPlayers" placeholder="Max Players" min="1" required>
+                            </div>
+                            <input type="number" id="gameDuration" placeholder="Duration (minutes)" min="1" required>
                             <button class="btn-action" onclick="addGame()">+ Add to List</button>
                         </div>
 
@@ -303,87 +365,288 @@
                     </div>
                 </div>
 
-                <div class="dashboard-column">
-                    <h2>Venue & Functions</h2>
-
-                    <div class="input-group">
-                        <label>Select Venue (With Capacity)</label>
-                        <select id="venueSelect">
-                            <option>Main Hall A (Capacity: 150)</option>
-                            <option>Garden Area (Capacity: 50)</option>
-                            <option>Rooftop Terrace (Capacity: 80)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Function Date</label>
-                        <input type="date">
-                    </div>
-
-                    <button class="btn-action" style="margin-top: 10px;" onclick="bookVenue()">Add Function & Block Venue</button>
+                
 
                     <div class="logic-note">
-                        <strong>System Note:</strong> After adding one function on a specific venue & date, the system will automatically <u>block</u> that venue for any other function requests.
+                        <strong>System Note:</strong> Venues are automatically booked when users select them. Only available venues are shown to users based on date and capacity requirements.
                     </div>
-                </div>
+        
 
             </div> 
         </div> 
     </main>
 
     <script>
-        function addGame() {
-            // Using the Select Dropdown instead of Text Input
-            const select = document.getElementById('newGameSelect');
-            const list = document.getElementById('gameList');
-            const blockSelect = document.getElementById('blockGameSelect');
-            const name = select.value;
+        // Load games and venues from database on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadGames();
+            await loadVenues();
+        });
 
-            if (name) {
-                // Add to Display List
+        async function loadGames() {
+            try {
+                const response = await fetch('http://localhost:5000/api/games');
+                const games = await response.json();
+                
+                const gameList = document.getElementById('gameList');
+                gameList.innerHTML = '';
+                
+                // Only show active games in the catalog
+                games.forEach(game => {
+                    if (game.status === 'Active') {
+                        const gameItem = document.createElement('div');
+                        gameItem.className = 'game-item';
+                        gameItem.setAttribute('data-id', game._id);
+                        gameItem.innerHTML = `
+                            <span>${game.name}</span>
+                            <span class="game-status">${game.status}</span>
+                        `;
+                        gameList.appendChild(gameItem);
+                    }
+                });
+                
+                updateBlockGameDropdown();
+            } catch (error) {
+                // Keep original games if database not available
+                console.log('Using default games');
+                updateBlockGameDropdown();
+            }
+        }
+
+        async function loadVenues() {
+            try {
+                const response = await fetch('http://localhost:5000/api/venues');
+                const venues = await response.json();
+                
+                const venueList = document.getElementById('venueList');
+                const bookedVenueList = document.getElementById('bookedVenueList');
+                venueList.innerHTML = '';
+                bookedVenueList.innerHTML = '';
+                
+                venues.forEach(venue => {
+                    if (venue.status === 'available') {
+                        const venueItem = document.createElement('div');
+                        venueItem.className = 'game-item';
+                        venueItem.setAttribute('data-id', venue._id);
+                        venueItem.innerHTML = `
+                            <span>${venue.name} (Capacity: ${venue.capacity})</span>
+                            <span class="game-status">Available</span>
+                        `;
+                        venueList.appendChild(venueItem);
+                    } else if (venue.status === 'booked') {
+                        const bookedItem = document.createElement('div');
+                        bookedItem.className = 'booked-venue-item';
+                        bookedItem.setAttribute('data-id', venue._id);
+                        bookedItem.innerHTML = `
+                            <div class="booked-venue-name">${venue.name}</div>
+                            <div class="booked-venue-details">
+                                <span>📅 ${venue.eventDetails?.eventName || 'Event'} • ${new Date(venue.bookedDate).toLocaleDateString()}</span>
+                                <span class="booked-status">Booked</span>
+                            </div>
+                        `;
+                        bookedVenueList.appendChild(bookedItem);
+                    }
+                });
+            } catch (error) {
+                console.log('Failed to load venues');
+            }
+        }
+
+        function updateBlockGameDropdown() {
+            const blockSelect = document.getElementById('blockGameSelect');
+            const gameItems = document.querySelectorAll('#gameList .game-item');
+            
+            // Clear existing options except the first one
+            blockSelect.innerHTML = '<option value="" disabled selected>Select a game to block...</option>';
+            
+            // Add only active games to the dropdown
+            gameItems.forEach(item => {
+                const gameName = item.querySelector('span').innerText;
+                const gameStatus = item.querySelector('.game-status');
+                
+                if (!gameStatus.classList.contains('blocked')) {
+                    const option = document.createElement('option');
+                    option.value = gameName;
+                    option.text = gameName;
+                    blockSelect.appendChild(option);
+                }
+            });
+        }
+
+        async function addGame() {
+            // Get all form values
+            const name = document.getElementById('newGameInput').value.trim();
+            const description = document.getElementById('gameDescription').value.trim();
+            const category = document.getElementById('gameCategory').value;
+            const minPlayers = parseInt(document.getElementById('minPlayers').value);
+            const maxPlayers = parseInt(document.getElementById('maxPlayers').value);
+            const duration = parseInt(document.getElementById('gameDuration').value);
+
+            // Validation
+            if (!name || !description || !category || !minPlayers || !maxPlayers || !duration) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (minPlayers > maxPlayers) {
+                alert('Min players cannot be greater than max players');
+                return;
+            }
+
+            const list = document.getElementById('gameList');
+
+            try {
+                // Save to database with all fields
+                const response = await fetch('http://localhost:5000/api/games', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        description: description,
+                        category: category,
+                        minPlayers: minPlayers,
+                        maxPlayers: maxPlayers,
+                        duration: duration
+                    })
+                });
+
+                if (response.ok) {
+                    const newGame = await response.json();
+                    // Add to Display List with database ID
+                    const newItem = document.createElement('div');
+                    newItem.className = 'game-item';
+                    newItem.setAttribute('data-id', newGame._id);
+                    newItem.innerHTML = `<span>${name}</span><span class="game-status">Active</span>`;
+                    list.appendChild(newItem);
+
+                    // Update block dropdown with new active game
+                    updateBlockGameDropdown();
+
+                    // Clear all inputs
+                    document.getElementById('newGameInput').value = '';
+                    document.getElementById('gameDescription').value = '';
+                    document.getElementById('gameCategory').value = '';
+                    document.getElementById('minPlayers').value = '';
+                    document.getElementById('maxPlayers').value = '';
+                    document.getElementById('gameDuration').value = '';
+                    
+                    alert(`${name} has been added successfully!`);
+                } else {
+                    const result = await response.json();
+                    alert(result.error);
+                }
+            } catch (error) {
+                // Fallback to original functionality
                 const newItem = document.createElement('div');
                 newItem.className = 'game-item';
                 newItem.innerHTML = `<span>${name}</span><span class="game-status">Active</span>`;
                 list.appendChild(newItem);
-
-                // Add the new game to the Block list dynamically so it can be blocked later
-                const newOption = document.createElement('option');
-                newOption.text = name;
-                blockSelect.add(newOption);
-
-                // Reset dropdown
-                select.value = ""; 
-            } else {
-                alert("Please select a game from the list.");
+                updateBlockGameDropdown();
+                
+                // Clear inputs
+                document.getElementById('newGameInput').value = '';
+                document.getElementById('gameDescription').value = '';
+                document.getElementById('gameCategory').value = '';
+                document.getElementById('minPlayers').value = '';
+                document.getElementById('maxPlayers').value = '';
+                document.getElementById('gameDuration').value = '';
+                
+                alert(`${name} has been added!`);
             }
         }
 
-        function blockGame() {
+        async function blockGame() {
             const select = document.getElementById('blockGameSelect');
             const nameToBlock = select.value;
-            const items = document.querySelectorAll('.game-item');
+            const items = document.querySelectorAll('#gameList .game-item');
 
             if (!nameToBlock) {
                 alert("Please select a game from the list first.");
                 return;
             }
 
-            let found = false;
+            let gameId = null;
+            let gameItem = null;
+            
+            // Find the game item and get its ID
             items.forEach(item => {
                 const gameName = item.querySelector('span').innerText;
                 if (gameName === nameToBlock) {
-                    const status = item.querySelector('.game-status');
-                    status.innerText = "Blocked";
-                    status.classList.add('blocked');
-                    found = true;
+                    gameId = item.getAttribute('data-id');
+                    gameItem = item;
                 }
             });
 
-            if(found) {
-                alert(`${nameToBlock} has been blocked.`);
+            if (gameItem && gameId) {
+                try {
+                    // Update database to block the game
+                    const response = await fetch(`http://localhost:5000/api/games/${gameId}/status`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'Blocked' })
+                    });
+
+                    if (response.ok) {
+                        // Remove from catalog display
+                        gameItem.remove();
+                        alert(`${nameToBlock} has been blocked and removed from catalog.`);
+                    } else {
+                        alert('Failed to block game in database.');
+                    }
+                } catch (error) {
+                    // Fallback to local removal if database fails
+                    gameItem.remove();
+                    alert(`${nameToBlock} has been blocked and removed from catalog.`);
+                }
+                
                 select.value = ""; // Reset dropdown
+                updateBlockGameDropdown(); // Update dropdown
             } else {
-                alert("Game not active in the current catalog.");
+                alert("Game not found in the current catalog.");
+            }
+        }
+
+        async function addVenue() {
+            const name = document.getElementById('newVenueInput').value.trim();
+            const capacity = parseInt(document.getElementById('venueCapacity').value);
+
+            if (!name || !capacity) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/venues', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, capacity })
+                });
+
+                if (response.ok) {
+                    const newVenue = await response.json();
+                    
+                    // Add to display list
+                    const venueList = document.getElementById('venueList');
+                    const newItem = document.createElement('div');
+                    newItem.className = 'game-item';
+                    newItem.setAttribute('data-id', newVenue._id);
+                    newItem.innerHTML = `
+                        <span>${name} (Capacity: ${capacity})</span>
+                        <span class="game-status">Available</span>
+                    `;
+                    venueList.appendChild(newItem);
+
+                    // Clear inputs
+                    document.getElementById('newVenueInput').value = '';
+                    document.getElementById('venueCapacity').value = '';
+                    
+                    alert(`${name} has been added successfully!`);
+                } else {
+                    const result = await response.json();
+                    alert(result.error);
+                }
+            } catch (error) {
+                alert('Failed to add venue. Please try again.');
             }
         }
 

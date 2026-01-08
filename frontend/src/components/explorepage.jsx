@@ -27,13 +27,7 @@ export default function ExplorePage() {
   const [availableVenues, setAvailableVenues] = useState([]);
   const [selectedVenue, setSelectedVenue] = useState(null);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
-
-  const venues = [
-    { id: 1, name: "Grand Hall", capacity: 200, location: "Downtown" },
-    { id: 2, name: "Garden Pavilion", capacity: 150, location: "Park Side" },
-    { id: 3, name: "Conference Center", capacity: 100, location: "Business District" },
-    { id: 4, name: "Cozy Studio", capacity: 50, location: "Arts Quarter" },
-  ];
+  const [loading, setLoading] = useState(false);
 
   const eventTypes = [
     {
@@ -56,28 +50,104 @@ export default function ExplorePage() {
     },
   ];
 
-  const handleFindVenues = () => {
-    const suitable = venues.filter(
-      (v) => v.capacity >= Number(formData.numberOfPeople)
-    );
-    setAvailableVenues(suitable);
-    setFormStep(2);
+  const handleFindVenues = async () => {
+    if (!formData.eventName || !formData.date || !formData.numberOfPeople) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/venues/available?date=${formData.date}&capacity=${formData.numberOfPeople}`
+      );
+      
+      if (response.ok) {
+        const venues = await response.json();
+        setAvailableVenues(venues);
+        setFormStep(2);
+      } else {
+        alert('Failed to fetch venues. Please try again.');
+      }
+    } catch (error) {
+      // Fallback to static venues if backend is not available
+      const venues = [
+        { _id: '1', name: "Grand Hall", capacity: 200, location: "Downtown" },
+        { _id: '2', name: "Garden Pavilion", capacity: 150, location: "Park Side" },
+        { _id: '3', name: "Conference Center", capacity: 100, location: "Business District" },
+        { _id: '4', name: "Cozy Studio", capacity: 50, location: "Arts Quarter" },
+      ];
+      const suitable = venues.filter(
+        (v) => v.capacity >= Number(formData.numberOfPeople)
+      );
+      setAvailableVenues(suitable);
+      setFormStep(2);
+    }
+    setLoading(false);
   };
 
-  const handleSubmit = () => {
-    setUpcomingEvents([
-      ...upcomingEvents,
-      {
-        id: Date.now(),
-        ...formData,
-        venue: selectedVenue,
-        type: selectedEvent,
-      },
-    ]);
-    setSelectedEvent(null);
-    setFormStep(1);
-    setFormData({ eventName: "", date: "", numberOfPeople: "" });
-    setSelectedVenue(null);
+  const handleSubmit = async () => {
+    if (!selectedVenue) {
+      alert('Please select a venue');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`http://localhost:5000/api/venues/${selectedVenue._id}/book`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventName: formData.eventName,
+          date: formData.date,
+          numberOfPeople: formData.numberOfPeople,
+          eventType: selectedEvent
+        })
+      });
+
+      if (response.ok) {
+        // Add to upcoming events
+        setUpcomingEvents([
+          ...upcomingEvents,
+          {
+            id: Date.now(),
+            ...formData,
+            venue: selectedVenue,
+            type: selectedEvent,
+          },
+        ]);
+        
+        alert(`Event "${formData.eventName}" has been booked successfully at ${selectedVenue.name}!`);
+        
+        // Reset form
+        setSelectedEvent(null);
+        setFormStep(1);
+        setFormData({ eventName: "", date: "", numberOfPeople: "" });
+        setSelectedVenue(null);
+      } else {
+        const result = await response.json();
+        alert(result.error || 'Failed to book venue');
+      }
+    } catch (error) {
+      // Fallback to local storage if backend fails
+      setUpcomingEvents([
+        ...upcomingEvents,
+        {
+          id: Date.now(),
+          ...formData,
+          venue: selectedVenue,
+          type: selectedEvent,
+        },
+      ]);
+      
+      alert(`Event "${formData.eventName}" has been booked locally!`);
+      
+      setSelectedEvent(null);
+      setFormStep(1);
+      setFormData({ eventName: "", date: "", numberOfPeople: "" });
+      setSelectedVenue(null);
+    }
+    setLoading(false);
   };
   const getCategoryName = (type) => {
   switch (type) {
@@ -164,8 +234,8 @@ export default function ExplorePage() {
                     })
                   }
                 />
-                <button className="submit-btn" onClick={handleFindVenues}>
-                  Find Venues <ArrowRight />
+                <button className="submit-btn" onClick={handleFindVenues} disabled={loading}>
+                  {loading ? 'Finding Venues...' : 'Find Venues'} <ArrowRight />
                 </button>
               </>
             )}
@@ -174,25 +244,25 @@ export default function ExplorePage() {
               <>
                 {availableVenues.map((venue) => (
                   <div
-                    key={venue.id}
+                    key={venue._id}
                     className={`venue-card ${
-                      selectedVenue?.id === venue.id ? "active" : ""
+                      selectedVenue?._id === venue._id ? "active" : ""
                     }`}
                     onClick={() => setSelectedVenue(venue)}
                   >
                     <h4>{venue.name}</h4>
                     <p>
-                      <MapPin /> {venue.location} • <Users /> {venue.capacity}
+                      <MapPin /> {venue.location || 'Location TBD'} • <Users /> {venue.capacity}
                     </p>
                   </div>
                 ))}
 
                 <button
                   className="submit-btn"
-                  disabled={!selectedVenue}
+                  disabled={!selectedVenue || loading}
                   onClick={handleSubmit}
                 >
-                  Submit Event
+                  {loading ? 'Booking...' : 'Submit Event'}
                 </button>
               </>
             )}

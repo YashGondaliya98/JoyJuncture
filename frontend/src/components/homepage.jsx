@@ -20,8 +20,8 @@ function HomePage() {
 
           <ul className="nav-links">
             <li onClick={() => goTo("/")}>Home</li>
-            <li onClick={() => goTo("/about")}>About Us</li>
-            <li onClick={() => goTo("/founder")}>Founder Story</li>
+            <li onClick={() => goTo("/about_us")}>About Us</li>
+            <li onClick={() => goTo("/founder_story")}>Founder Story</li>
             <li className="login-btn" onClick={() => goTo("/login")}>
               Login
             </li>
@@ -100,8 +100,8 @@ function HomePage() {
             <h4>Quick Links</h4>
             <ul>
               <li onClick={() => goTo("/")}>Home</li>
-              <li onClick={() => goTo("/about")}>About Us</li>
-              <li onClick={() => goTo("/founder")}>Founder Story</li>
+              <li onClick={() => goTo("/about_us")}>About Us</li>
+              <li onClick={() => goTo("/founder_story")}>Founder Story</li>
               <li onClick={() => goTo("/gamestore")}>Game Store</li>
             </ul>
           </div>

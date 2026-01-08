@@ -202,6 +202,124 @@ nav {
   font-size: 13px;
 }
 
+/* ================= FOUNDER STORY SPECIFIC STYLES ================= */
+.founders-page-root {
+  margin-top: 100px;
+}
+
+.brand-logo {
+  text-align: center;
+  font-family: "Pacifico", cursive;
+  font-size: 2rem;
+  color: #3c51af;
+  padding: 2rem 0;
+}
+
+.main-card {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 2rem;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hero h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 2.8rem;
+  color: #3c51af;
+  margin-bottom: 1rem;
+}
+
+.hero span {
+  color: #5b13a4;
+  font-style: italic;
+}
+
+.story-content {
+  max-width: 800px;
+  margin: auto;
+  margin-bottom: 4rem;
+}
+
+.story-content p {
+  font-family: "Inter", sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.highlight {
+  color: #3c51af;
+  font-weight: 600;
+}
+
+.team {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.team h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 2.2rem;
+  color: #3c51af;
+  margin-bottom: 0.5rem;
+}
+
+.team-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.founders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+.founder-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.founder-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.founder-name {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #3c51af;
+  margin-bottom: 0.5rem;
+}
+
+.founder-role {
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #5b13a4;
+  margin-bottom: 1rem;
+}
+
+.founder-desc {
+  font-family: "Inter", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #666;
+}
+
 /* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
   .cards-container {

@@ -1,338 +1,123 @@
-/* ================= FONT IMPORTS ================= */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500&family=Playfair+Display:wght@500;700&family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Comfortaa:wght@400;600;700&display=swap');
 
-/* ================= RESET ================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Inter", sans-serif;
-}
-
-/* ================= GLOBAL CONTAINER ================= */
-.container {
-  max-width: 1200px;
-  margin: auto;
-  width: 100%;
-  padding: 0 20px;
-}
-
-/* ================= HEADER ================= */
-header {
-  background: linear-gradient(135deg, #3c51af, #5b13a4);
-  position: fixed;
-  width: 100%;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
+.founder-section {
+  background: var(--primary-gradient);
   color: white;
-  font-family: "Poppins", sans-serif;
+  padding: var(--spacing-2xl) 0;
+  min-height: 80vh;
 }
 
-.logo {
-  font-size: 1.8rem;
-  font-family: "Pacifico", cursive;
-}
-
-.logo-img {
-  width: 50px;
-  height: 50px;
-}
-
-.nav-links {
-  display: flex;
-  gap: 1.5rem;
-  list-style: none;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.login-btn {
-  background: white;
-  color: #667eea;
-  padding: 6px 18px;
-  border-radius: 20px;
-  font-family: "Poppins", sans-serif;
-}
-
-/* ================= PAGE CONTENT SPACING ================= */
-/* ensures content below fixed header */
-.page-content {
-  padding-top: 120px; /* adjust to header height */
-}
-
-/* ================= LANDING ================= */
-.landing-section {
-  width: 100vw;
-  height: 700px;
-  margin-top: 100px;
-  background: linear-gradient(135deg, #3c51af, #5b13a4);
+.founder-section h1 {
+  font-family: 'Kalam', cursive;
+  font-size: 3.2rem;
+  font-weight: 700;
   color: white;
-  padding: 4rem 2rem;
-}
-
-.landing-content {
-  max-width: 1200px;
-  margin: auto;
   text-align: center;
+  margin-bottom: var(--spacing-2xl);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
-/* HERO TEXT */
-.landing-content h1 {
-  font-family: "Playfair Display", serif;
-  font-size: 2.8rem;
-  margin-bottom: 1rem;
-}
-
-.landing-content p {
-  font-family: "Playfair Display", serif;
-  font-size: 1.1rem;
-  opacity: 0.95;
-}
-
-/* Cards Container */
-.cards-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  gap: 2rem;
-  margin-top: 3rem;
-}
-
-/* Individual Card */
-.event-card {
-  flex: 1;
-  max-width: 320px;
-  background: white;
-  color: #333;
-  padding: 2rem;
-  border-radius: 15px;
-  cursor: pointer;
-  font-family: "Inter", sans-serif;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.event-card h3 {
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.event-card p {
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.event-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
-
-/* Buttons */
-.card-btn {
-  margin-top: 1rem;
-  background: linear-gradient(135deg, #3c51af, #5b13a4);
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 25px;
-  cursor: pointer;
-  font-family: "Poppins", sans-serif;
-}
-
-/* ================= FOOTER ================= */
-.footer {
-  background: linear-gradient(135deg, #000000, #000000);
-  color: #fff;
-  margin-top: 10px;
-  font-family: "Poppins", sans-serif;
-}
-
-.footer-container {
-  max-width: 100vw;
-  margin: auto;
-  padding-top: 40px;
-  padding-left: 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 30px;
-}
-
-.footer-section h3,
-.footer-section h4 {
-  margin-bottom: 12px;
-  font-weight: 600;
-}
-
-.footer-section p {
-  font-size: 14px;
-  line-height: 1.6;
-  opacity: 0.9;
-}
-
-.footer-section ul {
-  list-style: none;
-  padding: 0;
-}
-
-.footer-section ul li {
-  font-size: 14px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  transition: opacity 0.3s;
-}
-
-.footer-section ul li:hover {
-  opacity: 0.75;
-}
-
-.footer-bottom {
-  text-align: center;
-  padding: 15px;
-  background: rgba(0, 0, 0, 0.15);
-  font-size: 13px;
-}
-
-/* ================= FOUNDER STORY SPECIFIC STYLES ================= */
-.founders-page-root {
-  margin-top: 100px;
-}
-
-.brand-logo {
-  text-align: center;
-  font-family: "Pacifico", cursive;
-  font-size: 2rem;
-  color: #3c51af;
-  padding: 2rem 0;
-}
-
-.main-card {
-  max-width: 1200px;
-  margin: auto;
-  padding: 0 2rem;
-}
-
-.hero {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.hero h1 {
-  font-family: "Playfair Display", serif;
-  font-size: 2.8rem;
-  color: #3c51af;
-  margin-bottom: 1rem;
-}
-
-.hero span {
-  color: #5b13a4;
-  font-style: italic;
-}
-
-.story-content {
+.founder-content {
   max-width: 800px;
-  margin: auto;
-  margin-bottom: 4rem;
+  margin: 0 auto;
+  padding: var(--spacing-xl) 0;
 }
 
-.story-content p {
-  font-family: "Inter", sans-serif;
-  font-size: 1.1rem;
+.founder-story {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.story-section {
+  background: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-light);
+}
+
+.story-section h2 {
+  font-family: 'Kalam', cursive;
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.story-section p {
+  font-family: 'Comfortaa', cursive;
+  font-size: 1rem;
   line-height: 1.8;
-  margin-bottom: 1.5rem;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .highlight {
-  color: #3c51af;
-  font-weight: 600;
+  color: var(--primary-color);
+  font-weight: 700;
+  font-family: 'Kalam', cursive;
 }
 
-.team {
+.team-section {
+  background: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-light);
+}
+
+.team-section h2 {
+  font-family: 'Kalam', cursive;
+  font-size: 2rem;
+  color: var(--primary-color);
   text-align: center;
-  margin-bottom: 4rem;
-}
-
-.team h2 {
-  font-family: "Playfair Display", serif;
-  font-size: 2.2rem;
-  color: #3c51af;
-  margin-bottom: 0.5rem;
-}
-
-.team-subtitle {
-  font-family: "Inter", sans-serif;
-  font-size: 1.1rem;
-  color: #666;
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xl);
 }
 
 .founders-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  max-width: 800px;
-  margin: auto;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-xl);
 }
 
 .founder-card {
-  background: white;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  padding: var(--spacing-lg);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: var(--transition-normal);
 }
 
 .founder-card:hover {
+  border-color: var(--primary-color);
   transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .founder-name {
-  font-family: "Poppins", sans-serif;
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #3c51af;
-  margin-bottom: 0.5rem;
+  font-family: 'Kalam', cursive;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-sm);
 }
 
 .founder-role {
-  font-family: "Inter", sans-serif;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #5b13a4;
-  margin-bottom: 1rem;
+  font-family: 'Comfortaa', cursive;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
 }
 
 .founder-desc {
-  font-family: "Inter", sans-serif;
-  font-size: 0.95rem;
+  font-family: 'Comfortaa', cursive;
+  color: var(--text-secondary);
   line-height: 1.6;
-  color: #666;
 }
 
-/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
-  .cards-container {
-    flex-direction: column;
-    align-items: center;
+  .founder-section h1 {
+    font-size: 2.5rem;
   }
-
-  .event-card {
-    max-width: 90%;
-  }
-
-  nav {
-    flex-direction: column;
-    gap: 1rem;
+  
+  .founders-grid {
+    grid-template-columns: 1fr;
   }
 }

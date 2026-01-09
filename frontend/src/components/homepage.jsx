@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import Layout from "./shared/Layout";
 import "./homepage.css";
-import logo from "../assets/logo.png";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -11,24 +11,7 @@ function HomePage() {
   };
 
   return (
-    <>
-      {/* ================= HEADER ================= */}
-      <header>
-        <nav>
-          <img src={logo} alt="Joy Juncture" className="logo-img" />
-          <div className="logo">Joy Juncture</div>
-
-          <ul className="nav-links">
-            <li onClick={() => goTo("/")}>Home</li>
-            <li onClick={() => goTo("/about_us")}>About Us</li>
-            <li onClick={() => goTo("/founder_story")}>Founder Story</li>
-            <li className="login-btn" onClick={() => goTo("/login")}>
-              Login
-            </li>
-          </ul>
-        </nav>
-      </header>
-
+    <Layout className="full-width">
       {/* ================= HOME PAGE ================= */}
       <section className="landing-section">
         <div className="landing-content">
@@ -84,41 +67,7 @@ function HomePage() {
           </p>
         </div>
       </section>
-
-      {/* ================= FOOTER ================= */}
-      <footer className="footer">
-        <div className="footer-container">
-          <div className="footer-section">
-            <h3>🎉 Joy Juncture</h3>
-            <p>
-              A joyful ecosystem of games, experiences and community where play
-              creates lasting connections.
-            </p>
-          </div>
-
-          <div className="footer-section">
-            <h4>Quick Links</h4>
-            <ul>
-              <li onClick={() => goTo("/")}>Home</li>
-              <li onClick={() => goTo("/about_us")}>About Us</li>
-              <li onClick={() => goTo("/founder_story")}>Founder Story</li>
-              <li onClick={() => goTo("/gamestore")}>Game Store</li>
-            </ul>
-          </div>
-
-          <div className="footer-section">
-            <h4>Contact</h4>
-            <p>📧 support@joyjuncture.com</p>
-            <p>📞 +91 98765 43210</p>
-            <p>📍 India</p>
-          </div>
-        </div>
-
-        <div className="footer-bottom">
-          <p>© {new Date().getFullYear()} Joy Juncture. All Rights Reserved.</p>
-        </div>
-      </footer>
-    </>
+    </Layout>
   );
 }
 

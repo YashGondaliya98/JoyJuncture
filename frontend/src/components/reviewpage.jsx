@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import { Star, Heart, Gamepad2, BookOpen, ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import "./homepage.css"; // header/footer styles
-import "./reviewpage.css"; // review page styles
-import logo from "../assets/logo.png";
+import Layout from "./shared/Layout";
+import "./reviewpage.css";
 
-/* ================= STAR RATING ================= */
 const StarRating = ({ rating, interactive = false, onChange }) => (
   <div className="stars">
     {[1, 2, 3, 4, 5].map((star) => (
@@ -20,7 +17,6 @@ const StarRating = ({ rating, interactive = false, onChange }) => (
   </div>
 );
 
-/* ================= EVENT CARD ================= */
 const EventCard = ({ title, events, category, color, onSelectEvent, Icon }) => (
   <div className="event-card">
     <div className="event-card-header">
@@ -40,7 +36,7 @@ const EventCard = ({ title, events, category, color, onSelectEvent, Icon }) => (
             {event.reviews.length}{" "}
             {event.reviews.length === 1 ? "Review" : "Reviews"}
           </span>
-          <button onClick={() => onSelectEvent({ event, category })}>
+          <button className="btn btn-primary" onClick={() => onSelectEvent({ event, category })}>
             Review
           </button>
         </div>
@@ -49,9 +45,7 @@ const EventCard = ({ title, events, category, color, onSelectEvent, Icon }) => (
   </div>
 );
 
-/* ================= MAIN REVIEW PAGE ================= */
 export default function ReviewPage() {
-  const navigate = useNavigate(); // ← useNavigate for routing
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [reviewForm, setReviewForm] = useState({ name: "", rating: 5, comment: "" });
 
@@ -89,114 +83,79 @@ export default function ReviewPage() {
   };
 
   return (
-    <>
-      {/* ================= HEADER ================= */}
-      <header>
-        <nav>
-          <img src={logo} alt="Joy Juncture" className="logo-img" />
-          <div className="logo">Joy Juncture</div>
+    <Layout className="full-width">
+      <section className="review-section">
+        <div className="container">
+        <h1 className="review-page-title">Review Functions</h1>
 
-          <ul className="nav-links">
-            <li onClick={() => navigate("/")}>Home</li>
-            <li onClick={() => navigate("/about")}>About Us</li>
-            <li onClick={() => navigate("/founder")}>Founder Story</li>
-            <li className="login-btn" onClick={() => navigate("/login")}>Login</li>
-          </ul>
-        </nav>
-      </header>
-
-      <div style={{ paddingTop: "100px" }}>
-  {/* ================= PAGE TITLE ================= */}
-  <h1 className="review-page-title">Review Functions</h1>
-
-  {/* ================= REVIEW FORM ================= */}
-  {selectedEvent ? (
-    <div className="review-form-page">
-      <button className="back-btn" onClick={() => setSelectedEvent(null)}>
-        <ArrowLeft /> Back
-      </button>
-      <h2>{selectedEvent.event.name}</h2>
-      <input
-        placeholder="Your Name"
-        value={reviewForm.name}
-        onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
-      />
-      <StarRating
-        rating={reviewForm.rating}
-        interactive
-        onChange={(rating) => setReviewForm({ ...reviewForm, rating })}
-      />
-      <textarea
-        placeholder="Your Review"
-        value={reviewForm.comment}
-        onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
-      />
-      <button className="submit-btn" onClick={handleSubmit}>
-        Submit Review
-      </button>
-    </div>
-  ) : (
-    /* ================= LIST OF EVENTS ================= */
-    <div className="review-page">
-      <EventCard
-        title="Wedding Events"
-        Icon={Heart}
-        events={events.weddings}
-        category="weddings"
-        color="bg-pink-500"
-        onSelectEvent={setSelectedEvent}
-      />
-      <EventCard
-        title="Game Nights"
-        Icon={Gamepad2}
-        events={events.gameNights}
-        category="gameNights"
-        color="bg-purple-500"
-        onSelectEvent={setSelectedEvent}
-      />
-      <EventCard
-        title="Workshops"
-        Icon={BookOpen}
-        events={events.workshops}
-        category="workshops"
-        color="bg-blue-500"
-        onSelectEvent={setSelectedEvent}
-      />
-    </div>
-  )}
-</div>
-
-
-      {/* ================= FOOTER ================= */}
-      <footer className="footer">
-        <div className="footer-container">
-          <div className="footer-section">
-            <h3>🎉 Joy Juncture</h3>
-            <p>A joyful ecosystem of games, experiences and community where play creates lasting connections.</p>
+        {selectedEvent ? (
+          <div className="review-form-page">
+            <button className="btn btn-secondary mb-lg" onClick={() => setSelectedEvent(null)}>
+              <ArrowLeft /> Back
+            </button>
+            <h2>{selectedEvent.event.name}</h2>
+            
+            <div className="form-group">
+              <input
+                className="form-input"
+                placeholder="Your Name"
+                value={reviewForm.name}
+                onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
+              />
+            </div>
+            
+            <div className="form-group">
+              <StarRating
+                rating={reviewForm.rating}
+                interactive
+                onChange={(rating) => setReviewForm({ ...reviewForm, rating })}
+              />
+            </div>
+            
+            <div className="form-group">
+              <textarea
+                className="form-input"
+                placeholder="Your Review"
+                value={reviewForm.comment}
+                onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
+                rows="4"
+              />
+            </div>
+            
+            <button className="btn btn-primary" onClick={handleSubmit}>
+              Submit Review
+            </button>
           </div>
-
-          <div className="footer-section">
-            <h4>Quick Links</h4>
-            <ul>
-              <li onClick={() => navigate("/")}>Home</li>
-              <li onClick={() => navigate("/about")}>About Us</li>
-              <li onClick={() => navigate("/founder")}>Founder Story</li>
-              <li onClick={() => navigate("/gamestore")}>Game Store</li>
-            </ul>
+        ) : (
+          <div className="review-page">
+            <EventCard
+              title="Wedding Events"
+              Icon={Heart}
+              events={events.weddings}
+              category="weddings"
+              color="bg-pink"
+              onSelectEvent={setSelectedEvent}
+            />
+            <EventCard
+              title="Game Nights"
+              Icon={Gamepad2}
+              events={events.gameNights}
+              category="gameNights"
+              color="bg-purple"
+              onSelectEvent={setSelectedEvent}
+            />
+            <EventCard
+              title="Workshops"
+              Icon={BookOpen}
+              events={events.workshops}
+              category="workshops"
+              color="bg-blue"
+              onSelectEvent={setSelectedEvent}
+            />
           </div>
-
-          <div className="footer-section">
-            <h4>Contact</h4>
-            <p>📧 support@joyjuncture.com</p>
-            <p>📞 +91 98765 43210</p>
-            <p>📍 India</p>
-          </div>
+        )}
         </div>
-
-        <div className="footer-bottom">
-          <p>© {new Date().getFullYear()} Joy Juncture. All Rights Reserved.</p>
-        </div>
-      </footer>
-    </>
+      </section>
+    </Layout>
   );
 }

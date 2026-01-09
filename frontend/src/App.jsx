@@ -8,6 +8,8 @@ import FoundersPage from '../FoundersPage';
 import LoginPage from '../login';
 import CreateAccountPage from '../CreateAccount';
 import ProfilePage from '../profile';
+import WalletPage from '../wallet';
+import AdminPage from '../admin';
 function App() {
   return (
     <Routes>
@@ -20,6 +22,8 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/create-account" element={<CreateAccountPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/wallet" element={<WalletPage />} />
+      <Route path="/admin" element={<AdminPage />} />
     </Routes>
   );
 }

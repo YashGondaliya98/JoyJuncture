@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 import { Gamepad2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import "./homepage.css";  
+import Layout from "./shared/Layout";
 import "./gamestore.css";
-import logo from "../assets/logo.png";
 import sudokuImg from "../assets/sudoku.png";
 import puzzle from "../assets/2048puzzle.png";
 
 const GameStore = () => {
-  const navigate = useNavigate();
-
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [walletPoints, setWalletPoints] = useState(500);
@@ -110,119 +106,75 @@ const GameStore = () => {
   };
 
   return (
-    <>
-      {/* ================= HEADER ================= */}
-      <header>
-        <nav>
-          <img src={logo} alt="Joy Juncture" className="logo-img" />
-          <div className="logo">Joy Juncture</div>
-
-          <ul className="nav-links">
-            <li onClick={() => navigate("/")}>Home</li>
-            <li onClick={() => navigate("/about")}>About Us</li>
-            <li onClick={() => navigate("/founder")}>Founder Story</li>
-            <li className="login-btn" onClick={() => navigate("/login")}>Login</li>
-          </ul>
-        </nav>
-      </header>
-
-      <div style={{ paddingTop: "100px" }} className="game-store-container">
-        {/* ================= PAGE TITLE ================= */}
+    <Layout className="full-width">
+      <section className="gamestore-section">
+        <div className="container">
         <h1 className="game-store-title">Game Store</h1>
 
-        {/* ================= CATEGORY FILTER ================= */}
-        <div className="category-bar">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              className={selectedCategory === cat ? "active" : ""}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {cat}
-            </button>
-          ))}
+        <div className="store-controls">
+          <div className="category-bar">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                className={`category-btn ${selectedCategory === cat ? "active" : ""}`}
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          <div className="search-bar">
+            <input
+              className="form-input"
+              type="text"
+              placeholder="Search games..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
 
-        {/* ================= SEARCH BAR ================= */}
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Search games..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        {/* ================= MESSAGE ================= */}
         {showMessage && (
           <div className={`message ${showMessage.type}`}>
             {showMessage.text}
           </div>
         )}
 
-        {/* ================= GAME GRID ================= */}
         <div className="game-grid">
           {filteredGames.map(game => {
             const owned = purchasedGames.includes(game.id);
             return (
               <div key={game.id} className="game-card">
                 <img src={game.image} alt={game.title} />
-                <h3>{game.title}</h3>
-                <p>{game.description}</p>
-                <p className="points">{game.points} Points</p>
-
-                <div className="btn-row">
-                  <button
-                    className={owned ? "play owned" : "play"}
-                    onClick={() => handlePlayOnline(game)}
-                  >
-                    <Gamepad2 size={16} /> Play
-                  </button>
-                  <button
-                    className="buy"
-                    disabled={owned}
-                    onClick={() => handleBuyGame(game)}
-                  >
-                    {owned ? "Owned" : "Buy"}
-                  </button>
+                <div className="game-info">
+                  <h3>{game.title}</h3>
+                  <p>{game.description}</p>
+                  <p className="points">{game.points} Points</p>
+                  
+                  <div className="game-actions">
+                    <button
+                      className={`btn ${owned ? "btn-primary" : "btn-secondary"}`}
+                      onClick={() => handlePlayOnline(game)}
+                    >
+                      <Gamepad2 size={16} /> Play
+                    </button>
+                    <button
+                      className="btn btn-primary"
+                      disabled={owned}
+                      onClick={() => handleBuyGame(game)}
+                    >
+                      {owned ? "Owned" : "Buy"}
+                    </button>
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
-      </div>
-
-      {/* ================= FOOTER ================= */}
-      <footer className="footer">
-        <div className="footer-container">
-          <div className="footer-section">
-            <h3>🎉 Joy Juncture</h3>
-            <p>A joyful ecosystem of games, experiences and community where play creates lasting connections.</p>
-          </div>
-
-          <div className="footer-section">
-            <h4>Quick Links</h4>
-            <ul>
-              <li onClick={() => navigate("/")}>Home</li>
-              <li onClick={() => navigate("/about")}>About Us</li>
-              <li onClick={() => navigate("/founder")}>Founder Story</li>
-              <li onClick={() => navigate("/gamestore")}>Game Store</li>
-            </ul>
-          </div>
-
-          <div className="footer-section">
-            <h4>Contact</h4>
-            <p>📧 support@joyjuncture.com</p>
-            <p>📞 +91 98765 43210</p>
-            <p>📍 India</p>
-          </div>
         </div>
-
-        <div className="footer-bottom">
-          <p>© {new Date().getFullYear()} Joy Juncture. All Rights Reserved.</p>
-        </div>
-      </footer>
-    </>
+      </section>
+    </Layout>
   );
 };
 

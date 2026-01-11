@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Star, Heart, Gamepad2, BookOpen, ArrowLeft } from "lucide-react";
 import Layout from "./shared/Layout";
 import "./reviewpage.css";
@@ -26,15 +26,15 @@ const EventCard = ({ title, events, category, color, onSelectEvent, Icon }) => (
       <h2>{title}</h2>
     </div>
     {events.map((event) => (
-      <div key={event.id} className="event-item">
-        <h3>{event.name}</h3>
+      <div key={event._id} className="event-item">
+        <h3>{event.eventName}</h3>
         <p>
-          {event.date} • {event.location}
+          {new Date(event.eventDate).toLocaleDateString()} • {event.venueId?.name || 'Venue TBD'}
         </p>
         <div className="event-footer">
           <span>
-            {event.reviews.length}{" "}
-            {event.reviews.length === 1 ? "Review" : "Reviews"}
+            {event.reviewsCount || 0}{" "}
+            {(event.reviewsCount || 0) === 1 ? "Review" : "Reviews"}
           </span>
           <button className="btn btn-primary" onClick={() => onSelectEvent({ event, category })}>
             Review
@@ -48,39 +48,101 @@ const EventCard = ({ title, events, category, color, onSelectEvent, Icon }) => (
 export default function ReviewPage() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [reviewForm, setReviewForm] = useState({ name: "", rating: 5, comment: "" });
-
   const [events, setEvents] = useState({
-    weddings: [
-      { id: "w1", name: "Sarah & John Wedding", date: "2024-11-15", location: "Grand Ballroom", reviews: [] },
-      { id: "w2", name: "Emma & Michael Wedding", date: "2024-10-28", location: "Garden Venue", reviews: [] },
-    ],
-    gameNights: [
-      { id: "g1", name: "Board Game Bonanza", date: "2024-12-01", location: "Community Center", reviews: [] },
-      { id: "g2", name: "Trivia Night", date: "2024-11-22", location: "Joy Lounge", reviews: [] },
-    ],
-    workshops: [
-      { id: "ws1", name: "Creative Writing Workshop", date: "2024-11-25", location: "Learning Center", reviews: [] },
-      { id: "ws2", name: "Photography Basics", date: "2024-10-18", location: "Studio A", reviews: [] },
-    ],
+    weddings: [],
+    gameNights: [],
+    workshops: []
   });
+  const [loading, setLoading] = useState(true);
 
-  const handleSubmit = () => {
-    if (!reviewForm.name || !reviewForm.comment) return alert("Fill all fields");
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
-    const updatedEvents = { ...events };
-    const { event, category } = selectedEvent;
-    const index = updatedEvents[category].findIndex((e) => e.id === event.id);
-
-    updatedEvents[category][index].reviews.unshift({
-      id: Date.now(),
-      ...reviewForm,
-      date: new Date().toISOString().split("T")[0],
-    });
-
-    setEvents(updatedEvents);
-    setSelectedEvent(null);
-    setReviewForm({ name: "", rating: 5, comment: "" });
+  const fetchEvents = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const userId = user?.id;
+      
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
+      
+      const response = await fetch(`http://localhost:5000/api/wedding/upcoming-events/${userId}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        const allEvents = data.events;
+        console.log('All events:', allEvents.map(e => ({ name: e.eventName, eventType: e.eventType, category: e.category })));
+        
+        setEvents({
+          weddings: allEvents.filter(e => (e.category === "wedding" || e.eventType === "wedding")),
+          gameNights: allEvents.filter(e => (e.category === "gamenight" || e.eventType === "gaming" || e.eventType === "gamenight")),
+          workshops: allEvents.filter(e => (e.category === "workshop" || e.eventType === "workshop"))
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    }
+    setLoading(false);
   };
+
+  const handleSubmit = async () => {
+    if (!reviewForm.name || !reviewForm.comment) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const userId = user?.id;
+      
+      if (!userId) {
+        alert('Please login to submit review');
+        return;
+      }
+      
+      const response = await fetch('http://localhost:5000/api/reviews/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventId: selectedEvent.event._id,
+          userId: userId,
+          userName: reviewForm.name,
+          rating: reviewForm.rating,
+          comment: reviewForm.comment
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        alert('Review submitted successfully!');
+        setSelectedEvent(null);
+        setReviewForm({ name: "", rating: 5, comment: "" });
+        fetchEvents();
+      } else {
+        alert(result.error || 'Failed to submit review');
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      alert('Failed to submit review');
+    }
+  };
+
+  if (loading) {
+    return (
+      <Layout className="full-width">
+        <section className="review-section">
+          <div className="container">
+            <h1 className="review-page-title">Review Functions</h1>
+            <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>
+          </div>
+        </section>
+      </Layout>
+    );
+  }
 
   return (
     <Layout className="full-width">
@@ -93,7 +155,7 @@ export default function ReviewPage() {
             <button className="btn btn-secondary mb-lg" onClick={() => setSelectedEvent(null)}>
               <ArrowLeft /> Back
             </button>
-            <h2>{selectedEvent.event.name}</h2>
+            <h2>{selectedEvent.event.eventName}</h2>
             
             <div className="form-group">
               <input

@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Gamepad2 } from "lucide-react";
 import Layout from "./shared/Layout";
 import "./gamestore.css";
-import sudokuImg from "../assets/sudoku.png";
-import puzzle from "../assets/2048puzzle.png";
 
 const GameStore = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,70 +9,33 @@ const GameStore = () => {
   const [walletPoints, setWalletPoints] = useState(500);
   const [purchasedGames, setPurchasedGames] = useState([]);
   const [showMessage, setShowMessage] = useState(null);
+  const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const games = [
-    {
-      id: 1,
-      title: "Tic Tac Toe",
-      category: "Board",
-      points: 50,
-      rating: 4.5,
-      image: "https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=400&h=300&fit=crop",
-      description: "Classic 3x3 grid game. Challenge the AI or play with friends."
-    },
-    {
-      id: 2,
-      title: "Chess Master",
-      category: "Board",
-      points: 150,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1586165368502-1bad197a6461?w=400&h=300&fit=crop",
-      description: "Ultimate chess experience with multiple difficulty levels."
-    },
-    {
-      id: 3,
-      title: "Sudoku Challenge",
-      category: "Puzzle",
-      points: 80,
-      rating: 4.7,
-      image: sudokuImg,
-      description: "Train your brain with classic Sudoku puzzles."
-    },
-    {
-      id: 4,
-      title: "Snake Game",
-      category: "Arcade",
-      points: 60,
-      rating: 4.4,
-      image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=300&fit=crop",
-      description: "Classic snake game with modern graphics."
-    },
-    {
-      id: 5,
-      title: "2048 Puzzle",
-      category: "Puzzle",
-      points: 70,
-      rating: 4.6,
-      image: puzzle,
-      description: "Combine tiles to reach 2048."
-    },
-    {
-      id: 6,
-      title: "Memory Match",
-      category: "Puzzle",
-      points: 55,
-      rating: 4.3,
-      image: "https://images.unsplash.com/photo-1594122230689-45899d9e6f69?w=400&h=300&fit=crop",
-      description: "Flip cards and find matching pairs."
+  useEffect(() => {
+    fetchGames();
+  }, []);
+
+  const fetchGames = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/games?status=active');
+      const data = await response.json();
+      if (data.success) {
+        setGames(data.games);
+      }
+    } catch (error) {
+      console.error('Error fetching games:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const categories = ["All", "Board", "Puzzle", "Arcade", "Card"];
+  const categories = ["All", "board", "puzzle", "arcade", "card"];
 
   const filteredGames = games.filter(game =>
-    (game.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (game.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       game.description.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (selectedCategory === "All" || game.category === selectedCategory)
+    (selectedCategory === "All" || game.type === selectedCategory)
   );
 
   const displayMessage = (text, type) => {
@@ -83,27 +44,39 @@ const GameStore = () => {
   };
 
   const handleBuyGame = game => {
-    if (purchasedGames.includes(game.id)) {
-      displayMessage(`You already own ${game.title}`, "info");
+    if (purchasedGames.includes(game._id)) {
+      displayMessage(`You already own ${game.name}`, "info");
       return;
     }
 
     if (walletPoints >= game.points) {
       setWalletPoints(walletPoints - game.points);
-      setPurchasedGames([...purchasedGames, game.id]);
-      displayMessage(`Purchased ${game.title}!`, "success");
+      setPurchasedGames([...purchasedGames, game._id]);
+      displayMessage(`Purchased ${game.name}!`, "success");
     } else {
       displayMessage("Insufficient points!", "error");
     }
   };
 
   const handlePlayOnline = game => {
-    if (purchasedGames.includes(game.id)) {
-      displayMessage(`Launching ${game.title}...`, "success");
+    if (purchasedGames.includes(game._id)) {
+      displayMessage(`Launching ${game.name}...`, "success");
     } else {
       displayMessage("Please purchase the game first!", "error");
     }
   };
+
+  if (loading) {
+    return (
+      <Layout className="full-width">
+        <section className="gamestore-section">
+          <div className="container">
+            <div style={{ textAlign: 'center', padding: '50px' }}>Loading games...</div>
+          </div>
+        </section>
+      </Layout>
+    );
+  }
 
   return (
     <Layout className="full-width">
@@ -119,7 +92,7 @@ const GameStore = () => {
                 className={`category-btn ${selectedCategory === cat ? "active" : ""}`}
                 onClick={() => setSelectedCategory(cat)}
               >
-                {cat}
+                {cat === "All" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1)}
               </button>
             ))}
           </div>
@@ -143,12 +116,21 @@ const GameStore = () => {
 
         <div className="game-grid">
           {filteredGames.map(game => {
-            const owned = purchasedGames.includes(game.id);
+            const owned = purchasedGames.includes(game._id);
             return (
-              <div key={game.id} className="game-card">
-                <img src={game.image} alt={game.title} />
+              <div key={game._id} className="game-card">
+                <div className="game-placeholder" style={{ 
+                  height: '200px', 
+                  background: '#f0f0f0', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  color: '#666'
+                }}>
+                  🎮 {game.name}
+                </div>
                 <div className="game-info">
-                  <h3>{game.title}</h3>
+                  <h3>{game.name}</h3>
                   <p>{game.description}</p>
                   <p className="points">{game.points} Points</p>
                   

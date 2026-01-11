@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Users,
   MapPin,
@@ -28,6 +28,43 @@ export default function ExplorePage() {
   const [selectedVenue, setSelectedVenue] = useState(null);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // Fetch upcoming events when component loads
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchUpcomingEvents();
+    }
+  }, [isLoggedIn]);
+
+  const fetchUpcomingEvents = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const userId = user?.id;
+      
+      if (!userId) return;
+      
+      const response = await fetch(`http://localhost:5000/api/wedding/upcoming-events/${userId}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        const formattedEvents = data.events.map(event => ({
+          id: event._id,
+          eventName: event.eventName,
+          date: new Date(event.eventDate).toLocaleDateString(),
+          numberOfPeople: event.peopleCount,
+          venue: {
+            _id: event.venueId._id,
+            name: event.venueId.name,
+            location: event.venueId.location
+          },
+          type: event.eventType
+        }));
+        setUpcomingEvents(formattedEvents);
+      }
+    } catch (error) {
+      console.error('Error fetching upcoming events:', error);
+    }
+  };
 
   const eventTypes = [
     {
@@ -67,29 +104,30 @@ export default function ExplorePage() {
 
     setLoading(true);
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/venues/available?date=${formData.date}&capacity=${formData.numberOfPeople}`
-      );
+      const response = await fetch('http://localhost:5000/api/wedding/find-venues', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          peopleCount: formData.numberOfPeople
+        })
+      });
       
       if (response.ok) {
-        const venues = await response.json();
-        setAvailableVenues(venues);
-        setFormStep(2);
+        const data = await response.json();
+        if (data.success) {
+          setAvailableVenues(data.venues);
+          setFormStep(2);
+        } else {
+          alert('Failed to fetch venues. Please try again.');
+        }
       } else {
         alert('Failed to fetch venues. Please try again.');
       }
     } catch (error) {
-      const venues = [
-        { _id: '1', name: "Grand Hall", capacity: 200, location: "Downtown" },
-        { _id: '2', name: "Garden Pavilion", capacity: 150, location: "Park Side" },
-        { _id: '3', name: "Conference Center", capacity: 100, location: "Business District" },
-        { _id: '4', name: "Cozy Studio", capacity: 50, location: "Arts Quarter" },
-      ];
-      const suitable = venues.filter(
-        (v) => v.capacity >= Number(formData.numberOfPeople)
-      );
-      setAvailableVenues(suitable);
-      setFormStep(2);
+      console.error('Error fetching venues:', error);
+      alert('Failed to fetch venues. Please try again.');
     }
     setLoading(false);
   };
@@ -102,27 +140,27 @@ export default function ExplorePage() {
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/venues/${selectedVenue._id}/book`, {
-        method: 'PATCH',
+      const user = JSON.parse(localStorage.getItem('user'));
+      const userId = user?.id;
+      
+      const response = await fetch('http://localhost:5000/api/wedding/create-event', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           eventName: formData.eventName,
-          date: formData.date,
-          numberOfPeople: formData.numberOfPeople,
+          eventDate: formData.date,
+          peopleCount: formData.numberOfPeople,
+          venueId: selectedVenue._id,
+          userId: userId,
           eventType: selectedEvent
         })
       });
 
-      if (response.ok) {
-        setUpcomingEvents([
-          ...upcomingEvents,
-          {
-            id: Date.now(),
-            ...formData,
-            venue: selectedVenue,
-            type: selectedEvent,
-          },
-        ]);
+      const result = await response.json();
+      
+      if (result.success) {
+        // Refresh upcoming events from database
+        await fetchUpcomingEvents();
         
         alert(`Event "${formData.eventName}" has been booked successfully at ${selectedVenue.name}!`);
         
@@ -130,27 +168,15 @@ export default function ExplorePage() {
         setFormStep(1);
         setFormData({ eventName: "", date: "", numberOfPeople: "" });
         setSelectedVenue(null);
+      } else if (result.requireLogin) {
+        alert('Please login first to create events!');
+        navigate('/login');
       } else {
-        const result = await response.json();
         alert(result.error || 'Failed to book venue');
       }
     } catch (error) {
-      setUpcomingEvents([
-        ...upcomingEvents,
-        {
-          id: Date.now(),
-          ...formData,
-          venue: selectedVenue,
-          type: selectedEvent,
-        },
-      ]);
-      
-      alert(`Event "${formData.eventName}" has been booked locally!`);
-      
-      setSelectedEvent(null);
-      setFormStep(1);
-      setFormData({ eventName: "", date: "", numberOfPeople: "" });
-      setSelectedVenue(null);
+      console.error('Error creating event:', error);
+      alert('Failed to create event. Please try again.');
     }
     setLoading(false);
   };

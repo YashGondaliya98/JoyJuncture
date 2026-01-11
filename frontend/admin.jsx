@@ -1,68 +1,144 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from './src/components/shared/Layout';
 import './admin.css';
 
-const initialGames = [
-  { name: "Dead Man's Deck", status: 'Active' },
-  { name: 'Mehfil', status: 'Active' },
-  { name: 'Tamasha', status: 'Blocked' },
-];
-
-const addableGames = [
-  'The Bloody Inheritance',
-  'Buzzed',
-  'Judge Me & Guess',
-  'One More Round',
-  "Dead Man's Deck (Re-stock)",
-  'Mehfil (Re-stock)',
-  'Tamasha (Re-stock)',
-];
-
-const venues = [
-  'Main Hall A (Capacity: 150)',
-  'Garden Area (Capacity: 50)',
-  'Rooftop Terrace (Capacity: 80)',
-];
-
 const AdminDashboard = () => {
-  const [games, setGames] = useState(initialGames);
-  const [newGame, setNewGame] = useState('');
-  const [blockGameName, setBlockGameName] = useState('');
-  const [selectedVenue, setSelectedVenue] = useState(venues[0]);
+  const [adminProfile, setAdminProfile] = useState(null);
+  const [games, setGames] = useState([]);
+  const [venues, setVenues] = useState([]);
+  const [newGameName, setNewGameName] = useState('');
+  const [blockGameId, setBlockGameId] = useState('');
+  const [venueName, setVenueName] = useState('');
+  const [venueCapacity, setVenueCapacity] = useState('');
+  const [selectedVenue, setSelectedVenue] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const handleAddGame = () => {
-    if (!newGame) {
-      window.alert('Please select a game from the list.');
-      return;
+  useEffect(() => {
+    fetchAdminProfile();
+    fetchGames();
+    fetchVenues();
+  }, []);
+
+  const fetchAdminProfile = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user && user.id) {
+        const response = await fetch(`http://localhost:5000/admin/profile/${user.id}`);
+        const data = await response.json();
+        if (data.success) {
+          setAdminProfile(data.admin);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching admin profile:', error);
     }
-    setGames((prev) => [...prev, { name: newGame, status: 'Active' }]);
-    setNewGame('');
   };
 
-  const handleBlockGame = () => {
-    if (!blockGameName) {
-      window.alert('Please select a game from the list first.');
-      return;
-    }
-
-    let found = false;
-    const updated = games.map((g) => {
-      if (g.name === blockGameName) {
-        found = true;
-        return { ...g, status: 'Blocked' };
+  const fetchGames = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/games');
+      const data = await response.json();
+      if (data.success) {
+        setGames(data.games);
       }
-      return g;
-    });
+    } catch (error) {
+      console.error('Error fetching games:', error);
+    }
+  };
 
-    if (!found) {
-      window.alert('Game not active in the current catalog.');
+  const fetchVenues = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/venues');
+      const data = await response.json();
+      if (data.success) {
+        setVenues(data.venues);
+        if (data.venues.length > 0) {
+          setSelectedVenue(data.venues[0]._id);
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching venues:', error);
+      setLoading(false);
+    }
+  };
+
+  const handleAddGame = async () => {
+    if (!newGameName) {
+      window.alert('Please enter a game name.');
+      return;
+    }
+    
+    try {
+      const response = await fetch('http://localhost:5000/api/games', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newGameName })
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        setGames([...games, data.game]);
+        setNewGameName('');
+        window.alert('Game added successfully!');
+      }
+    } catch (error) {
+      console.error('Error adding game:', error);
+      window.alert('Error adding game');
+    }
+  };
+
+  const handleBlockGame = async () => {
+    if (!blockGameId) {
+      window.alert('Please select a game to block.');
       return;
     }
 
-    setGames(updated);
-    window.alert(`${blockGameName} has been blocked.`);
-    setBlockGameName('');
+    try {
+      const response = await fetch(`http://localhost:5000/api/games/${blockGameId}/block`, {
+        method: 'PATCH'
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        setGames(games.filter(g => g._id !== blockGameId));
+        setBlockGameId('');
+        window.alert('Game blocked successfully!');
+      }
+    } catch (error) {
+      console.error('Error blocking game:', error);
+      window.alert('Error blocking game');
+    }
+  };
+
+  const handleAddVenue = async () => {
+    if (!venueName || !venueCapacity) {
+      window.alert('Please enter venue name and capacity.');
+      return;
+    }
+    
+    try {
+      const response = await fetch('http://localhost:5000/api/venues', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          name: venueName, 
+          capacity: parseInt(venueCapacity) 
+        })
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        setVenues([...venues, data.venue]);
+        setVenueName('');
+        setVenueCapacity('');
+        window.alert('Venue added successfully!');
+      }
+    } catch (error) {
+      console.error('Error adding venue:', error);
+      window.alert('Error adding venue');
+    }
   };
 
   const handleBookVenue = () => {
@@ -70,12 +146,26 @@ const AdminDashboard = () => {
       window.alert('Please select a date first.');
       return;
     }
+    const venue = venues.find(v => v._id === selectedVenue);
     window.alert(
-      `Venue '${selectedVenue}' booked for ${selectedDate}. It is now blocked for other functions on this date.`
+      `Venue '${venue?.name}' booked for ${selectedDate}. It is now blocked for other functions on this date.`
     );
   };
 
-  const blockOptions = Array.from(new Set(games.map((g) => g.name)));
+  const getAdminInitials = (fullName) => {
+    if (!fullName) return 'AD';
+    return fullName.split(' ').map(name => name[0]).join('').toUpperCase();
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="container">
+          <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -84,12 +174,14 @@ const AdminDashboard = () => {
           <h1>Admin Dashboard</h1>
           
           <div className="admin-profile-card">
-            <div className="admin-avatar">AD</div>
+            <div className="admin-avatar">
+              {adminProfile ? getAdminInitials(adminProfile.fullName) : 'AD'}
+            </div>
             <div className="admin-info">
               <h3>Admin Profile</h3>
-              <p><strong>Name:</strong> Khushi Poddar & Muskan Poddar</p>
-              <p><strong>Email:</strong> admin@joyjuncture.com</p>
-              <p><strong>Role:</strong> Administrator</p>
+              <p><strong>Name:</strong> {adminProfile?.fullName || 'Loading...'}</p>
+              <p><strong>Email:</strong> {adminProfile?.email || 'Loading...'}</p>
+              <p><strong>Role:</strong> {adminProfile?.role || 'Administrator'}</p>
             </div>
           </div>
 
@@ -99,11 +191,11 @@ const AdminDashboard = () => {
 
               <label>Current Catalog</label>
               <div className="game-list-container">
-                {games.map((game, idx) => (
-                  <div className="game-item" key={idx}>
+                {games.map((game) => (
+                  <div className="game-item" key={game._id}>
                     <span>{game.name}</span>
-                    <span className={`game-status ${game.status === 'Blocked' ? 'blocked' : ''}`}>
-                      {game.status}
+                    <span className="game-status">
+                      Active
                     </span>
                   </div>
                 ))}
@@ -112,37 +204,36 @@ const AdminDashboard = () => {
               <div className="admin-actions">
                 <div className="input-group">
                   <label>Add New Game</label>
-                  <select
+                  <input
                     className="form-input"
-                    value={newGame}
-                    onChange={(e) => setNewGame(e.target.value)}
-                  >
-                    <option value="" disabled>Select a game to add...</option>
-                    {addableGames.map((g) => (
-                      <option key={g} value={g}>{g}</option>
-                    ))}
-                  </select>
-                  <button className="btn btn-primary" onClick={handleAddGame}>
-                    + Add to List
-                  </button>
+                    type="text"
+                    placeholder="Enter game name..."
+                    value={newGameName}
+                    onChange={(e) => setNewGameName(e.target.value)}
+                  />
                 </div>
 
-                <div className="input-group">
+                <button className="btn btn-primary" onClick={handleAddGame}>
+                  + Add to List
+                </button>
+
+                <div className="input-group" style={{ marginTop: '20px' }}>
                   <label>Block A Game</label>
                   <select
                     className="form-input"
-                    value={blockGameName}
-                    onChange={(e) => setBlockGameName(e.target.value)}
+                    value={blockGameId}
+                    onChange={(e) => setBlockGameId(e.target.value)}
                   >
                     <option value="" disabled>Select a game to block...</option>
-                    {blockOptions.map((name) => (
-                      <option key={name} value={name}>{name}</option>
+                    {games.map((game) => (
+                      <option key={game._id} value={game._id}>{game.name}</option>
                     ))}
                   </select>
-                  <button className="btn btn-secondary" onClick={handleBlockGame}>
-                    Block Selected Game
-                  </button>
                 </div>
+
+                <button className="btn btn-secondary" onClick={handleBlockGame}>
+                  Block Selected Game
+                </button>
               </div>
             </div>
 
@@ -150,31 +241,31 @@ const AdminDashboard = () => {
               <h2>Venue & Functions</h2>
 
               <div className="input-group">
-                <label>Select Venue (With Capacity)</label>
-                <select
-                  className="form-input"
-                  value={selectedVenue}
-                  onChange={(e) => setSelectedVenue(e.target.value)}
-                >
-                  {venues.map((v) => (
-                    <option key={v} value={v}>{v}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="input-group">
-                <label>Function Date</label>
+                <label>Venue Name</label>
                 <input
                   className="form-input"
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
+                  type="text"
+                  placeholder="Enter venue name..."
+                  value={venueName}
+                  onChange={(e) => setVenueName(e.target.value)}
                 />
               </div>
 
-              <button className="btn btn-primary" onClick={handleBookVenue}>
-                Add Function & Block Venue
+              <div className="input-group">
+                <label>Capacity / No. of People</label>
+                <input
+                  className="form-input"
+                  type="number"
+                  placeholder="Enter capacity..."
+                  value={venueCapacity}
+                  onChange={(e) => setVenueCapacity(e.target.value)}
+                />
+              </div>
+
+              <button className="btn btn-primary" onClick={handleAddVenue}>
+                Add Venue
               </button>
+
 
               <div className="logic-note">
                 <strong>System Note:</strong> After adding one function on a

@@ -7,6 +7,10 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
   const navigate = useNavigate();
 
   const goTo = (path) => {
@@ -14,16 +18,43 @@ const LoginPage = () => {
     window.scrollTo(0, 0);
   };
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Set login status to true
-    localStorage.setItem('isLoggedIn', 'true');
-    // Redirect based on admin status
-    if (isAdmin) {
-      localStorage.setItem('isAdmin', 'true');
-      navigate('/admin');
-    } else {
-      navigate('/profile');
+    
+    try {
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          isAdmin: isAdmin
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
+        if (data.role === 'admin') {
+          localStorage.setItem('isAdmin', 'true');
+          navigate('/admin');
+        } else {
+          navigate('/profile');
+        }
+      } else {
+        alert(data.error || 'Login failed');
+      }
+    } catch (error) {
+      alert('Network error. Please try again.');
     }
   };
 
@@ -47,6 +78,8 @@ const LoginPage = () => {
                   name="email"
                   className="form-input"
                   placeholder="name@company.com"
+                  value={formData.email}
+                  onChange={handleChange}
                   required
                   autoComplete="email"
                 />
@@ -62,6 +95,8 @@ const LoginPage = () => {
                   name="password"
                   className="form-input"
                   placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleChange}
                   required
                   autoComplete="current-password"
                 />

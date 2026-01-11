@@ -1,12 +1,82 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from './src/components/shared/Layout';
 import './wallet.css';
 
 const WalletPage = () => {
-  const points = 2500;
+  const [walletData, setWalletData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchWallet = async () => {
+      try {
+        const userData = JSON.parse(localStorage.getItem('user'));
+        console.log('User data from localStorage:', userData);
+        
+        if (!userData || !userData.id) {
+          console.log('No user data found, redirecting to login');
+          window.location.href = '/login';
+          return;
+        }
+
+        const response = await fetch(`http://localhost:5000/user/wallet/${userData.id}`);
+        const data = await response.json();
+        console.log('Wallet response:', data);
+
+        if (data.success) {
+          setWalletData(data);
+        } else {
+          console.error('Wallet fetch failed:', data.error);
+        }
+      } catch (error) {
+        console.error('Error fetching wallet:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWallet();
+  }, []);
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="container">
+          <div className="wallet-header">
+            <div className="wallet-nav">
+              <Link to="/">Home</Link>
+              <span className="active">Wallet</span>
+              <Link to="/profile">My Profile</Link>
+            </div>
+          </div>
+          <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!walletData) {
+    return (
+      <Layout>
+        <div className="container">
+          <div className="wallet-header">
+            <div className="wallet-nav">
+              <Link to="/">Home</Link>
+              <span className="active">Wallet</span>
+              <Link to="/profile">My Profile</Link>
+            </div>
+          </div>
+          <div style={{ textAlign: 'center', padding: '50px' }}>Wallet not found</div>
+        </div>
+      </Layout>
+    );
+  }
+
+  const points = walletData.joyPoints || 0;
   const rate = 1;
   const value = points * rate;
+  const initials = walletData.fullName ? walletData.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+  const joinedDate = walletData.joinedAt ? new Date(walletData.joinedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Unknown';
 
   const handleConvertPoints = () => {
     const ok = window.confirm(
@@ -36,21 +106,21 @@ const WalletPage = () => {
 
         <div className="wallet-content">
           <div className="profile-section">
-            <div className="avatar-large">KP</div>
-            <h2>Khushi Poddar</h2>
+            <div className="avatar-large">{initials}</div>
+            <h2>{walletData.fullName || 'User'}</h2>
             
             <div className="profile-details">
               <div className="profile-item">
                 <span className="profile-label">Player Status</span>
-                <span className="profile-value">Gold Member</span>
+                <span className="profile-value">{walletData.playerStatus || 'Beginner'}</span>
               </div>
               <div className="profile-item">
                 <span className="profile-label">Joined</span>
-                <span className="profile-value">August 2024</span>
+                <span className="profile-value">{joinedDate}</span>
               </div>
               <div className="profile-item">
                 <span className="profile-label">Email</span>
-                <span className="profile-value">khushi@example.com</span>
+                <span className="profile-value">{walletData.email || 'No email'}</span>
               </div>
             </div>
           </div>
@@ -80,14 +150,23 @@ const WalletPage = () => {
 
             <div className="history-section">
               <h3>Points History</h3>
-              <div className="history-item">
-                <span>Win: Dead Man's Deck</span>
-                <span className="points-gain">+ 500 pts</span>
-              </div>
-              <div className="history-item">
-                <span>Converted to Cash</span>
-                <span className="points-loss">- 1000 pts</span>
-              </div>
+              {walletData.pointsHistory && walletData.pointsHistory.length > 0 ? (
+                walletData.pointsHistory.map((item, idx) => (
+                  <div className="history-item" key={idx}>
+                    <span>
+                      {item.actionType === 'game_win' ? `Win: ${item.referenceId || 'Game'}` : 'Converted to Cash'}
+                    </span>
+                    <span className={item.pointsChange > 0 ? "points-gain" : "points-loss"}>
+                      {item.pointsChange > 0 ? '+' : ''}{item.pointsChange} pts
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="history-item">
+                  <span>No points history yet</span>
+                  <span className="points-gain">Start playing!</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

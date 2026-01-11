@@ -6,11 +6,50 @@ import './CreateAccount.css';
 const CreateAccount = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    fullname: '',
+    email: '',
+    password: '',
+    confirm_password: ''
+  });
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: hook up to your API (/api/register) here
+    
+    if (formData.password !== formData.confirm_password) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullname: formData.fullname,
+          email: formData.email,
+          password: formData.password
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        alert('Account created successfully!');
+        navigate('/login');
+      } else {
+        alert(data.error || 'Registration failed');
+      }
+    } catch (error) {
+      alert('Network error. Please try again.');
+    }
   };
 
   return (
@@ -31,6 +70,8 @@ const CreateAccount = () => {
                 name="fullname"
                 className="form-input"
                 placeholder="John Doe"
+                value={formData.fullname}
+                onChange={handleChange}
                 required
                 autoComplete="name"
               />
@@ -44,6 +85,8 @@ const CreateAccount = () => {
                 name="email"
                 className="form-input"
                 placeholder="name@company.com"
+                value={formData.email}
+                onChange={handleChange}
                 required
                 autoComplete="email"
               />
@@ -58,6 +101,8 @@ const CreateAccount = () => {
                   name="password"
                   className="form-input"
                   placeholder="Min. 8 characters"
+                  value={formData.password}
+                  onChange={handleChange}
                   required
                   autoComplete="new-password"
                 />
@@ -80,6 +125,8 @@ const CreateAccount = () => {
                   name="confirm_password"
                   className="form-input"
                   placeholder="Re-enter password"
+                  value={formData.confirm_password}
+                  onChange={handleChange}
                   required
                   autoComplete="new-password"
                 />

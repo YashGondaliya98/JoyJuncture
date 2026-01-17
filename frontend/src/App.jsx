@@ -3,13 +3,13 @@ import HomePage from './components/homepage';
 import ReviewPage from './components/reviewpage';
 import GameStore from './components/gamestore';
 import ExplorePage from './components/explorepage';
-import AboutPage from '../about_us';
-import FoundersPage from '../FoundersPage';
-import LoginPage from '../login';
-import CreateAccountPage from '../CreateAccount';
-import ProfilePage from '../profile';
-import WalletPage from '../wallet';
-import AdminPage from '../admin';
+import AboutPage from '../../about_us';
+import FoundersPage from '../../FoundersPage';
+import LoginPage from '../../login';
+import CreateAccountPage from '../../CreateAccount';
+import ProfilePage from '../../profile';
+import WalletPage from '../../wallet';
+import AdminPage from '../../admin';
 function App() {
   return (
     <Routes>

@@ -190,7 +190,13 @@ export const register = async (req, res) => {
       city: "Surat, Gujarat",
       joyPoints: 10,
       joinedAt: new Date(),
-      status: "active"
+      status: "active",
+      ownedGames: [],
+      gameTrials: {
+        wordGuess: 0,
+        memoryMatch: 0,
+        quickMath: 0
+      }
     });
 
     await user.save();

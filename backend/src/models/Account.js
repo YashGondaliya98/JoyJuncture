@@ -73,6 +73,22 @@ const userSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  ownedGames: {
+    type: [String],
+    default: []
+  },
+  gameTrials: {
+    type: {
+      wordGuess: { type: Number, default: 0 },
+      memoryMatch: { type: Number, default: 0 },
+      quickMath: { type: Number, default: 0 }
+    },
+    default: {
+      wordGuess: 0,
+      memoryMatch: 0,
+      quickMath: 0
+    }
+  },
   activityLog: {
     type: [{
       actionType: String,

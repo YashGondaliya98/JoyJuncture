@@ -69,7 +69,7 @@ export default function ReviewPage() {
         return;
       }
       
-      const response = await fetch(`http://localhost:5000/api/wedding/upcoming-events/${userId}`);
+      const response = await fetch(`https://joyjuncture-b.onrender.com/api/wedding/upcoming-events/${userId}`);
       const data = await response.json();
       
       if (data.success) {
@@ -103,7 +103,7 @@ export default function ReviewPage() {
         return;
       }
       
-      const response = await fetch('http://localhost:5000/api/reviews/submit', {
+      const response = await fetch('https://joyjuncture-b.onrender.com/api/reviews/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

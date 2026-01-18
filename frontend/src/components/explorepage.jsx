@@ -43,7 +43,7 @@ export default function ExplorePage() {
       
       if (!userId) return;
       
-      const response = await fetch(`http://localhost:5000/api/wedding/upcoming-events/${userId}`);
+      const response = await fetch(`https://joyjuncture-b.onrender.com/api/wedding/upcoming-events/${userId}`);
       const data = await response.json();
       
       if (data.success) {
@@ -104,7 +104,7 @@ export default function ExplorePage() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/wedding/find-venues', {
+      const response = await fetch('https://joyjuncture-b.onrender.com/api/wedding/find-venues', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ export default function ExplorePage() {
       const user = JSON.parse(localStorage.getItem('user'));
       const userId = user?.id;
       
-      const response = await fetch('http://localhost:5000/api/wedding/create-event', {
+      const response = await fetch('https://joyjuncture-b.onrender.com/api/wedding/create-event', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

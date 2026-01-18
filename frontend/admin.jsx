@@ -24,7 +24,7 @@ const AdminDashboard = () => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user && user.id) {
-        const response = await fetch(`http://localhost:5000/admin/profile/${user.id}`);
+        const response = await fetch(`https://joyjuncture-b.onrender.com/admin/profile/${user.id}`);
         const data = await response.json();
         if (data.success) {
           setAdminProfile(data.admin);
@@ -37,7 +37,7 @@ const AdminDashboard = () => {
 
   const fetchGames = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/games');
+      const response = await fetch('https://joyjuncture-b.onrender.com/api/games');
       const data = await response.json();
       if (data.success) {
         setGames(data.games);
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
 
   const fetchVenues = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/venues');
+      const response = await fetch('https://joyjuncture-b.onrender.com/api/venues');
       const data = await response.json();
       if (data.success) {
         setVenues(data.venues);
@@ -71,7 +71,7 @@ const AdminDashboard = () => {
     }
     
     try {
-      const response = await fetch('http://localhost:5000/api/games', {
+      const response = await fetch('https://joyjuncture-b.onrender.com/api/games', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newGameName })
@@ -96,7 +96,7 @@ const AdminDashboard = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/games/${blockGameId}/block`, {
+      const response = await fetch(`https://joyjuncture-b.onrender.com/api/games/${blockGameId}/block`, {
         method: 'PATCH'
       });
       
@@ -119,7 +119,7 @@ const AdminDashboard = () => {
     }
     
     try {
-      const response = await fetch('http://localhost:5000/api/venues', {
+      const response = await fetch('https://joyjuncture-b.onrender.com/api/venues', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

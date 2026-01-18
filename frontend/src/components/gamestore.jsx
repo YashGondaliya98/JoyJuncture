@@ -18,7 +18,7 @@ const GameStore = () => {
 
   const fetchGames = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/games?status=active');
+      const response = await fetch('https://joyjuncture-b.onrender.com/api/games?status=active');
       const data = await response.json();
       if (data.success) {
         setGames(data.games);

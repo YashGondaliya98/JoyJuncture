@@ -19,7 +19,7 @@ const WalletPage = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:5000/user/wallet/${userData.id}`);
+        const response = await fetch(`https://joyjuncture-b.onrender.com/user/wallet/${userData.id}`);
         const data = await response.json();
         console.log('Wallet response:', data);
 

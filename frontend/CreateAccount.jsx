@@ -27,7 +27,7 @@ const CreateAccount = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/register', {
+      const response = await fetch('https://joyjuncture-b.onrender.com/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

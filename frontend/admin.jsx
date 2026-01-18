@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Layout from './src/components/shared/Layout';
 import './admin.css';
 
+const LABELS = {
+  CURRENT_CATALOG: 'Current Catalog',
+  ADD_NEW_GAME: 'Add New Game',
+  BLOCK_A_GAME: 'Block A Game',
+  VENUE_NAME: 'Venue Name',
+  CAPACITY: 'Capacity / No. of People'
+};
+
 const AdminDashboard = () => {
   const [adminProfile, setAdminProfile] = useState(null);
   const [games, setGames] = useState([]);
@@ -25,9 +33,14 @@ const AdminDashboard = () => {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user && user.id) {
         const response = await fetch(`https://joyjuncture-b.onrender.com/admin/profile/${user.id}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         if (data.success) {
           setAdminProfile(data.admin);
+        } else {
+          console.error('Failed to fetch admin profile:', data.error);
         }
       }
     } catch (error) {
@@ -73,15 +86,24 @@ const AdminDashboard = () => {
     try {
       const response = await fetch('https://joyjuncture-b.onrender.com/api/games', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
         body: JSON.stringify({ name: newGameName })
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       
       const data = await response.json();
       if (data.success) {
         setGames([...games, data.game]);
         setNewGameName('');
         window.alert('Game added successfully!');
+      } else {
+        window.alert(data.error || 'Failed to add game');
       }
     } catch (error) {
       console.error('Error adding game:', error);
@@ -97,14 +119,23 @@ const AdminDashboard = () => {
 
     try {
       const response = await fetch(`https://joyjuncture-b.onrender.com/api/games/${blockGameId}/block`, {
-        method: 'PATCH'
+        method: 'PATCH',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       
       const data = await response.json();
       if (data.success) {
         setGames(games.filter(g => g._id !== blockGameId));
         setBlockGameId('');
         window.alert('Game blocked successfully!');
+      } else {
+        window.alert(data.error || 'Failed to block game');
       }
     } catch (error) {
       console.error('Error blocking game:', error);
@@ -121,12 +152,19 @@ const AdminDashboard = () => {
     try {
       const response = await fetch('https://joyjuncture-b.onrender.com/api/venues', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
         body: JSON.stringify({ 
           name: venueName, 
           capacity: parseInt(venueCapacity) 
         })
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       
       const data = await response.json();
       if (data.success) {
@@ -134,6 +172,8 @@ const AdminDashboard = () => {
         setVenueName('');
         setVenueCapacity('');
         window.alert('Venue added successfully!');
+      } else {
+        window.alert(data.error || 'Failed to add venue');
       }
     } catch (error) {
       console.error('Error adding venue:', error);
@@ -189,7 +229,7 @@ const AdminDashboard = () => {
             <div className="dashboard-column">
               <h2>Game Management</h2>
 
-              <label>Current Catalog</label>
+              <label>{LABELS.CURRENT_CATALOG}</label>
               <div className="game-list-container">
                 {games.map((game) => (
                   <div className="game-item" key={game._id}>
@@ -203,7 +243,7 @@ const AdminDashboard = () => {
 
               <div className="admin-actions">
                 <div className="input-group">
-                  <label>Add New Game</label>
+                  <label>{LABELS.ADD_NEW_GAME}</label>
                   <input
                     className="form-input"
                     type="text"
@@ -218,7 +258,7 @@ const AdminDashboard = () => {
                 </button>
 
                 <div className="input-group" style={{ marginTop: '20px' }}>
-                  <label>Block A Game</label>
+                  <label>{LABELS.BLOCK_A_GAME}</label>
                   <select
                     className="form-input"
                     value={blockGameId}
@@ -241,7 +281,7 @@ const AdminDashboard = () => {
               <h2>Venue & Functions</h2>
 
               <div className="input-group">
-                <label>Venue Name</label>
+                <label>{LABELS.VENUE_NAME}</label>
                 <input
                   className="form-input"
                   type="text"
@@ -252,7 +292,7 @@ const AdminDashboard = () => {
               </div>
 
               <div className="input-group">
-                <label>Capacity / No. of People</label>
+                <label>{LABELS.CAPACITY}</label>
                 <input
                   className="form-input"
                   type="number"

@@ -8,8 +8,24 @@ const GAME_PRICES = {
   word: 600
 };
 
+// Initialize fixed games if they don't exist
+const initializeGames = async () => {
+  const gameCount = await Game.countDocuments();
+  if (gameCount === 0) {
+    const fixedGames = [
+      { name: "trivia", description: "Trivia Quiz Game", type: "puzzle", points: 5, minPlayers: 1, maxPlayers: 1, durationMinutes: 10, status: "active" },
+      { name: "rps", description: "Rock Paper Scissors", type: "arcade", points: 200, minPlayers: 1, maxPlayers: 2, durationMinutes: 5, status: "active" },
+      { name: "guess", description: "Number Guessing Game", type: "puzzle", points: 400, minPlayers: 1, maxPlayers: 1, durationMinutes: 15, status: "active" },
+      { name: "word", description: "Word Puzzle Game", type: "puzzle", points: 600, minPlayers: 1, maxPlayers: 1, durationMinutes: 20, status: "active" }
+    ];
+    await Game.insertMany(fixedGames);
+  }
+};
+
 export const buyGame = async (req, res) => {
   try {
+    await initializeGames();
+    
     const { userId, gameId } = req.body;
     
     if (!userId || !gameId) {
@@ -49,6 +65,8 @@ export const buyGame = async (req, res) => {
 
 export const playGame = async (req, res) => {
   try {
+    await initializeGames();
+    
     const { userId, gameId, won } = req.body;
     
     if (!userId || !gameId) {

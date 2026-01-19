@@ -1,5 +1,6 @@
 import Venue from "../models/Venue.js";
 import Function from "../models/Function.js";
+import User from "../models/Account.js";
 import mongoose from "mongoose";
 
 export const findVenues = async (req, res) => {
@@ -109,6 +110,11 @@ export const createWeddingEvent = async (req, res) => {
     
     await event.save();
     await Venue.findByIdAndUpdate(venueId, { status: "booked" });
+    
+    // Add event to user's createdEvents
+    await User.findByIdAndUpdate(userId, {
+      $addToSet: { createdEvents: event._id }
+    });
     
     res.json({ success: true, event });
   } catch (error) {

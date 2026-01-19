@@ -69,6 +69,7 @@ export const submitReview = async (req, res) => {
     // Update user
     await User.findByIdAndUpdate(userId, {
       $inc: { totalReviews: 1 },
+      $addToSet: { reviewedEvents: eventId },
       lastReviewAt: new Date()
     });
     

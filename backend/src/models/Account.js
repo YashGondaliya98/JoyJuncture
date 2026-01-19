@@ -89,6 +89,18 @@ const userSchema = new mongoose.Schema({
       quickMath: 0
     }
   },
+  createdEvents: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Function' }],
+    default: []
+  },
+  attendedEvents: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Function' }],
+    default: []
+  },
+  reviewedEvents: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Function' }],
+    default: []
+  },
   activityLog: {
     type: [{
       actionType: String,
